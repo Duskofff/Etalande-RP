@@ -1,311 +1,370 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Screen - Serveur GMod</title>
+    <meta charset="utf-8">
+    <title>Chargement du serveur</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
-        
-        body, html {
+        body {
             margin: 0;
             padding: 0;
-            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
             overflow: hidden;
-            font-family: 'Montserrat', sans-serif;
-            color: white;
         }
-        
-        .background {
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 25%;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .main-content {
+            width: 75%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slideshow {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            z-index: -1;
         }
 
-        .particles {
+        .slide {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
         }
-        
-        .container {
-            position: relative;
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .server-info {
+            margin-bottom: 30px;
+        }
+
+        .server-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ff7700;
+            text-shadow: 0 0 10px rgba(255, 119, 0, 0.7);
+        }
+
+        .server-description {
+            font-size: 16px;
+            color: #dddddd;
+            line-height: 1.4;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 3px solid #ff7700;
+            box-shadow: 0 0 10px rgba(255, 119, 0, 0.7);
+        }
+
+        .player-name {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .steam-id {
+            font-size: 14px;
+            color: #aaaaaa;
+        }
+
+        .loading-bar-container {
             width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .title {
-            font-size: 5em;
-            font-weight: 900;
-            margin: 0;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        .subtitle {
-            font-size: 1.8em;
-            margin: 10px 0;
-            opacity: 0.9;
-        }
-
-        .profile {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background-color: #e94560;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 30px rgba(233, 69, 96, 0.8);
-            margin-bottom: 40px;
-            overflow: hidden;
-            position: relative;
-            animation: pulse 2s infinite ease-in-out;
-        }
-
-        .profile img {
-            width: 90%;
-            height: 90%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .progress-container {
-            width: 80%;
-            max-width: 800px;
-            margin-top: 40px;
-        }
-
-        .progress-bar {
-            height: 8px;
+            height: 20px;
             background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+            border-radius: 10px;
             overflow: hidden;
             margin-bottom: 10px;
         }
 
-        .progress {
+        .loading-bar {
             height: 100%;
-            background: linear-gradient(90deg, #e94560, #ff9a3c);
             width: 0%;
-            border-radius: 4px;
-            animation: progress 30s linear forwards;
+            background: linear-gradient(90deg, #ff7700, #ffaa00);
+            border-radius: 10px;
+            transition: width 0.2s ease-out;
+            box-shadow: 0 0 10px rgba(255, 119, 0, 0.7);
         }
 
         .loading-text {
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-
-        .message-ticker {
-            position: absolute;
-            bottom: 40px;
-            left: 0;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 15px 0;
-            overflow: hidden;
-        }
-
-        .message-content {
             display: flex;
-            animation: ticker 30s linear infinite;
-            white-space: nowrap;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #bbbbbb;
         }
 
-        .message {
-            margin: 0 30px;
-            font-size: 1.2em;
+        .rules {
+            margin-top: 30px;
         }
 
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            }
-            to {
-                text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 30px #e94560;
-            }
+        .rules-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff7700;
+            margin-bottom: 10px;
         }
 
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(233, 69, 96, 0.9);
-            }
-            100% {
-                box-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
-            }
+        .rules-list {
+            font-size: 14px;
+            color: #dddddd;
+            line-height: 1.6;
         }
 
-        @keyframes progress {
-            0% { width: 0%; }
-            10% { width: 15%; }
-            30% { width: 40%; }
-            50% { width: 60%; }
-            70% { width: 75%; }
-            90% { width: 90%; }
-            100% { width: 100%; }
-        }
-
-        @keyframes ticker {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-
-        .game-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            text-align: right;
-        }
-
-        .info-item {
-            margin-bottom: 5px;
-            font-size: 0.9em;
-            opacity: 0.8;
+        .rules-list li {
+            margin-bottom: 8px;
         }
 
         .footer {
-            position: absolute;
-            bottom: 10px;
-            font-size: 0.8em;
-            opacity: 0.6;
+            font-size: 12px;
+            color: #777777;
+            text-align: center;
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
-    <div class="background"></div>
-    
-    <div class="particles" id="particles-js"></div>
-    
     <div class="container">
-        <div class="header">
-            <h1 class="title">New Dawn RolePlay</h1>
-            <h2 class="subtitle">Un monde de possibilités vous attend</h2>
-        </div>
-        
-        <div class="profile">
-            <img src="/api/placeholder/300/300" alt="Avatar du serveur" id="profile-image">
-        </div>
-        
-        <div class="loading-text">
-            Chargement de votre expérience...
-        </div>
-        
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress" id="progress-bar"></div>
+        <div class="sidebar">
+            <div>
+                <div class="server-info">
+                    <div class="server-name">NOM DE TON SERVEUR</div>
+                    <div class="server-description">
+                        Bienvenue sur notre serveur Garry's Mod ! Nous offrons une expérience unique avec des modes de jeu personnalisés et une communauté amicale.
+                    </div>
+                </div>
+
+                <div class="player-info">
+                    <img class="avatar" id="player-avatar" src="">
+                    <div>
+                        <div class="player-name" id="player-name">Chargement...</div>
+                        <div class="steam-id" id="player-steamid">SteamID: Chargement...</div>
+                    </div>
+                </div>
+
+                <div class="loading-status">
+                    <div class="loading-bar-container">
+                        <div class="loading-bar" id="loading-bar"></div>
+                    </div>
+                    <div class="loading-text">
+                        <span id="loading-status-text">Connexion au serveur...</span>
+                        <span id="loading-percentage">0%</span>
+                    </div>
+                </div>
             </div>
-            <div id="loading-status">Téléchargement des fichiers addons (0%)...</div>
+
+            <div class="rules">
+                <div class="rules-title">Règles du Serveur</div>
+                <ol class="rules-list">
+                    <li>Respectez tous les joueurs et staff</li>
+                    <li>Pas de triche ou d'exploits</li>
+                    <li>Pas de spam ou de flood dans le chat</li>
+                    <li>Pas de publicité pour d'autres serveurs</li>
+                    <li>Amusez-vous et faites preuve de fair-play !</li>
+                </ol>
+            </div>
+
+            <div class="footer">
+                © 2025 NOM DE TON SERVEUR - Tous droits réservés
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="slideshow" id="slideshow">
+                <!-- Les images seront chargées dynamiquement -->
+            </div>
         </div>
     </div>
-    
-    <div class="game-info">
-        <div class="info-item">Map: <span id="map-name">gm_construct</span></div>
-        <div class="info-item">Joueurs: <span id="players">0/32</span></div>
-        <div class="info-item">Ping: <span id="ping">45ms</span></div>
-    </div>
-    
-    <div class="message-ticker">
-        <div class="message-content">
-            <div class="message">Bienvenue sur News Dawn RP ! Plongez dans un RP libre et immersif où chaque décision compte.</div>
-            <div class="message">Profitez d'objets et modèles 3D exclusifs : t'el que de la drogue à la police !</div>
-            <div class="message">Accédez rapidement à votre inventaire avec F4, et personnalisez-le en ajoutant des armes via ALT+C.</div>
-            <div class="message">Notre serveur est en évolution constante** ! Attendez-vous à de nouvelles fonctionnalités et améliorations régulières.</div>
-            <div class="message">Besoin d'aide ? Tapez /help pour découvrir toutes les fonctionnalités exclusives de notre serveur.</div>
-            <div class="message">Rejoignez notre Discord pour ne rien manquer des événements à venir et des mises à jour importantes !</div>            
-        </div>
-    </div>
-    
-    <div class="footer">
-        © 2025 - New Dawn RP - Tous droits réservés
-    </div>
 
-    <!-- Ajout de l'élément audio pour la musique -->
-    <audio id="background-music" loop>
-        <source src="votre-musique.mp3" type="audio/mp3">
-        Votre navigateur ne supporte pas la balise audio.
-    </audio>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Récupère l'élément audio
-        const music = document.getElementById('background-music');
+        // Configuration (à personnaliser)
+        const config = {
+            serverName: "NOM DE TON SERVEUR",
+            serverDescription: "Bienvenue sur notre serveur Garry's Mod ! Nous offrons une expérience unique avec des modes de jeu personnalisés et une communauté amicale.",
+            images: [
+                "https://exemple.com/image1.jpg", // Remplace par tes propres URLs d'images
+                "https://exemple.com/image2.jpg",
+                "https://exemple.com/image3.jpg",
+                "https://exemple.com/image4.jpg"
+            ],
+            rules: [
+                "Respectez tous les joueurs et staff",
+                "Pas de triche ou d'exploits",
+                "Pas de spam ou de flood dans le chat",
+                "Pas de publicité pour d'autres serveurs",
+                "Amusez-vous et faites preuve de fair-play !"
+            ],
+            slideshowInterval: 5000, // Intervalle en ms pour le changement d'image
+            accentColor: "#ff7700" // Couleur principale du thème
+        };
 
-        // Démarre la musique au début du chargement
-        window.addEventListener('load', () => {
-            music.play(); // Démarre la musique lorsque la page est complètement chargée
-            updateLoadingProgress();
-            animateBackground();
-        });
+        // Variables pour les éléments DOM
+        let loadingBar = document.getElementById("loading-bar");
+        let loadingPercentage = document.getElementById("loading-percentage");
+        let loadingStatusText = document.getElementById("loading-status-text");
+        let playerAvatar = document.getElementById("player-avatar");
+        let playerName = document.getElementById("player-name");
+        let playerSteamID = document.getElementById("player-steamid");
+        let slideshow = document.getElementById("slideshow");
 
-        // Arrêter la musique lorsque le chargement est terminé
-        function stopMusic() {
-            music.pause(); // Pause la musique à la fin du chargement
-            music.currentTime = 0; // Remet la musique au début
+        // Fonction pour créer le diaporama
+        function setupSlideshow() {
+            config.images.forEach((imageUrl, index) => {
+                const slide = document.createElement("div");
+                slide.className = "slide";
+                slide.style.backgroundImage = `url(${imageUrl})`;
+                
+                if (index === 0) {
+                    slide.classList.add("active");
+                }
+                
+                slideshow.appendChild(slide);
+            });
         }
 
-        // Simulation du chargement
-        const loadingMessages = [
-            "Téléchargement des fichiers addons",
-            "Chargement des textures",
-            "Configuration du serveur",
-            "Préparation du monde",
-            "Chargement des scripts Lua",
-            "Initialisation des modules RP",
-            "Connexion à la base de données",
-            "Presque prêt"
-        ];
+        // Fonction pour faire défiler les images
+        function startSlideshow() {
+            let slides = document.querySelectorAll(".slide");
+            let currentSlide = 0;
+            
+            setInterval(() => {
+                slides[currentSlide].classList.remove("active");
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add("active");
+            }, config.slideshowInterval);
+        }
 
-        const progressBar = document.getElementById('progress-bar');
-        const loadingStatus = document.getElementById('loading-status');
-        let progress = 0;
-        let messageIndex = 0;
-
-        function updateLoadingProgress() {
-            progress += Math.random() * 3;
-            if (progress > 100) progress = 100;
-
-            progressBar.style.width = progress + '%';
-
-            if (progress < 100) {
-                const newMessageIndex = Math.floor(progress / 14);
-                if (newMessageIndex !== messageIndex) {
-                    messageIndex = newMessageIndex;
-                    loadingStatus.textContent = loadingMessages[messageIndex] + ` (${Math.floor(progress)}%)...`;
-                } else {
-                    loadingStatus.textContent = loadingMessages[messageIndex] + ` (${Math.floor(progress)}%)...`;
-                }
-
-                setTimeout(updateLoadingProgress, Math.random() * 1000 + 200);
-            } else {
-                loadingStatus.textContent = "Chargement terminé ! Connexion au serveur...";
-                stopMusic(); // Arrête la musique lorsque le chargement est terminé
+        // Fonction pour mettre à jour la barre de chargement
+        function updateLoadingBar(percentage, status) {
+            loadingBar.style.width = percentage + "%";
+            loadingPercentage.textContent = percentage + "%";
+            
+            if (status) {
+                loadingStatusText.textContent = status;
             }
         }
+
+        // Fonctions pour l'API GMod LoadingScreen
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            // Mise à jour des informations du serveur
+            document.querySelector(".server-name").textContent = servername || config.serverName;
+            updateLoadingBar(5, "Connexion au serveur...");
+        }
+
+        function SetStatusChanged(status) {
+            updateLoadingBar(null, status);
+        }
+
+        function SetFilesTotal(total) {
+            window.filesTotal = total;
+        }
+
+        function SetFilesNeeded(needed) {
+            window.filesNeeded = needed;
+            
+            if (window.filesTotal) {
+                const percentage = Math.round(((window.filesTotal - needed) / window.filesTotal) * 100);
+                updateLoadingBar(percentage, "Téléchargement des fichiers...");
+            }
+        }
+
+        function DownloadingFile(filename) {
+            updateLoadingBar(null, "Téléchargement: " + filename);
+        }
+
+        function SetStatusChanged(status) {
+            updateLoadingBar(null, status);
+        }
+
+        // Fonction pour simuler le chargement (à retirer en production)
+        function simulateLoading() {
+            let percentage = 0;
+            const loadingSteps = [
+                "Connexion au serveur...",
+                "Téléchargement des ressources...",
+                "Chargement des addons...",
+                "Préparation du monde...",
+                "Presque prêt..."
+            ];
+            
+            const interval = setInterval(() => {
+                percentage += Math.floor(Math.random() * 5) + 1;
+                
+                if (percentage >= 100) {
+                    percentage = 100;
+                    clearInterval(interval);
+                }
+                
+                const statusIndex = Math.min(Math.floor(percentage / 20), loadingSteps.length - 1);
+                updateLoadingBar(percentage, loadingSteps[statusIndex]);
+            }, 500);
+        }
+
+        // Initialisation
+        document.addEventListener("DOMContentLoaded", function() {
+            // Configuration du serveur
+            document.querySelector(".server-name").textContent = config.serverName;
+            document.querySelector(".server-description").textContent = config.serverDescription;
+            
+            // Configuration des règles
+            const rulesList = document.querySelector(".rules-list");
+            rulesList.innerHTML = "";
+            config.rules.forEach(rule => {
+                const li = document.createElement("li");
+                li.textContent = rule;
+                rulesList.appendChild(li);
+            });
+            
+            // Configuration du pied de page
+            document.querySelector(".footer").textContent = `© ${new Date().getFullYear()} ${config.serverName} - Tous droits réservés`;
+            
+            // Mise en place du diaporama
+            setupSlideshow();
+            startSlideshow();
+            
+            // En mode test, simulation de l'avatar et du chargement
+            // En production, ces informations seront fournies par GMod
+            playerAvatar.src = "https://avatars.akamai.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg";
+            playerName.textContent = "Joueur Test";
+            playerSteamID.textContent = "SteamID: STEAM_0:1:12345678";
+            
+            // Simulation du chargement (à retirer en production)
+            simulateLoading();
+        });
     </script>
 </body>
 </html>

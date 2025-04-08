@@ -82,15 +82,14 @@
 </head>
 <body>
     <div class="background-slideshow">
-        <!-- Remplace ces URLs par tes liens d'images -->
-        <img src="image1.jpg">
-        <img src="image2.jpg">
-        <img src="image3.jpg">
+        <img src="https://i.imgur.com/TON_LIEN_1.jpg">
+        <img src="https://i.imgur.com/TON_LIEN_2.jpg">
+        <img src="https://i.imgur.com/TON_LIEN_3.jpg">
     </div>
 
     <div class="container">
         <div class="player-info">
-            <img class="avatar" id="steam-avatar" src="" alt="Steam Avatar">
+            <img class="avatar" id="steam-avatar" src="default-avatar.jpg" alt="Steam Avatar">
             <h2 id="steam-name">Chargement...</h2>
         </div>
 
@@ -109,7 +108,6 @@
     </div>
 
     <script>
-        // Diaporama
         let currentSlide = 0;
         const slides = document.querySelectorAll('.background-slideshow img');
         
@@ -119,18 +117,25 @@
             slides[currentSlide].classList.add('active');
         }
 
-        // Activer la première image
         slides[0].classList.add('active');
-        // Changer d'image toutes les 5 secondes
         setInterval(nextSlide, 5000);
 
-        // Fonctions GMod
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
             const steamName = document.getElementById('steam-name');
-            const steamAvatar = document.getElementById('steam-avatar');
-            
             steamName.textContent = steamid;
-            steamAvatar.src = `http://steamcommunity.com/profiles/${steamid}/avatar`;
+            
+            // Utilisation de l'API communautaire Steam
+            fetch(`https://steamcommunity.com/profiles/${steamid}?xml=1`)
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(data, "text/xml");
+                const avatarUrl = xml.querySelector("avatarFull").textContent;
+                document.getElementById('steam-avatar').src = avatarUrl;
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
         }
 
         let filesNeeded = 0;

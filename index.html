@@ -1,544 +1,123 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Écran de chargement GMod - Casino Style</title>
+    <title>Écran de chargement</title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            overflow: hidden;
+            background-color: #1a1a1a;
+            font-family: 'Roboto', sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-        }
-        
-        #background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background-size: cover;
-            background-position: center;
-            filter: brightness(0.5);
-        }
-        
-        .title-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
-            z-index: 10;
-        }
-        
-        .title {
-            font-size: 4em;
-            font-weight: bold;
-            text-transform: uppercase;
-            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 85, 85, 0.7);
-            color: #ffffff;
-            margin-bottom: 10px;
-            letter-spacing: 3px;
-        }
-        
-        .subtitle {
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            margin-bottom: 10px;
-        }
-        
-        .tagline {
-            font-size: 3em;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 85, 85, 0.5);
-        }
-        
-        .profile-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            z-index: 1;
+            color: white;
         }
-        
-        .profile-image {
-            width: 180px;
-            height: 180px;
+
+        .container {
+            text-align: center;
+        }
+
+        .avatar {
+            width: 128px;
+            height: 128px;
             border-radius: 50%;
-            border: 5px solid rgba(255, 85, 85, 0.6);
-            overflow: hidden;
-            box-shadow: 0 0 25px rgba(255, 85, 85, 0.8);
+            border: 4px solid #4169E1;
+            animation: glow 2s infinite;
+            margin-bottom: 20px;
         }
-        
-        .profile-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
+
         .player-name {
-            margin-top: 15px;
-            font-size: 2em;
-            font-weight: bold;
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(255, 85, 85, 0.8);
+            font-size: 32px;
+            margin-bottom: 30px;
         }
-        
-        .instruction {
-            position: absolute;
-            bottom: 40%;
-            width: 100%;
-            text-align: center;
-            font-size: 1.6em;
-            color: #ffffff;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-            z-index: 1;
-        }
-        
-        .server-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            color: #ffffff;
-            text-align: center;
-            z-index: 1;
-        }
-        
-        .server-text {
-            max-width: 80%;
-            margin: 0 auto;
-            line-height: 1.6;
-            font-size: 1.1em;
-        }
-        
-        .player-name-highlight {
-            color: #ff5555;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(255, 85, 85, 0.5);
-        }
-        
-        .server-name-highlight {
-            color: #ff5555;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(255, 85, 85, 0.5);
-        }
-        
-        .loading-bar-container {
-            position: absolute;
-            bottom: 80px;
-            left: 0;
-            right: 0;
-            width: 70%;
-            margin: 0 auto;
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-            z-index: 1;
-        }
-        
-        .loading-text {
-            font-size: 1.1em;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
+
         .loading-bar {
-            height: 25px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        .loading-progress {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff3333, #ff5555);
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-        
-        #audio-control {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            z-index: 2;
-        }
-        
-        #audio-control button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-        
-        #audio-control .volume {
-            margin-left: 10px;
-            width: 100px;
-        }
-        
-        .tips-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             width: 300px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-            z-index: 1;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
-        
-        .tips-title {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            color: #ff5555;
-            text-align: center;
-            font-weight: bold;
+
+        .progress {
+            width: 100%;
+            height: 100%;
+            background: #4169E1;
+            animation: loading 2s infinite;
+            transform-origin: left;
         }
-        
+
+        .loading-text {
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
         .tip {
-            margin-bottom: 10px;
-            line-height: 1.4;
-            font-size: 0.9em;
-        }
-        
-        .cancel-button {
+            font-size: 16px;
+            color: #aaa;
             position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background-color: rgba(255, 85, 85, 0.7);
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 2;
+            bottom: 40px;
+            animation: tipChange 10s infinite;
         }
-        
-        .cancel-button:hover {
-            background-color: rgba(255, 85, 85, 1);
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #4169E1; }
+            50% { box-shadow: 0 0 20px #4169E1; }
+            100% { box-shadow: 0 0 5px #4169E1; }
         }
-        
-        .loading-status {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
+
+        @keyframes loading {
+            0% { transform: scaleX(0); }
+            50% { transform: scaleX(1); }
+            100% { transform: scaleX(0); }
+        }
+
+        @keyframes tipChange {
+            0%, 20% { opacity: 0; }
+            25%, 95% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <div id="background"></div>
-    
-    <div class="title-container">
-        <h1 class="title">Du Case Opening,</h1>
-        <h2 class="subtitle">Un marché entre joueurs,</h2>
-        <h2 class="tagline">Du Farm 2 Win !</h2>
-    </div>
-    
-    <div class="profile-container">
-        <div class="profile-image">
-            <img id="steam-avatar" src="/api/placeholder/180/180" alt="Avatar Steam">
-        </div>
-        <div class="player-name" id="player-name">Chargement...</div>
-    </div>
-    
-    <div class="instruction" id="instruction-text">
-        Activez la troisième personne avec les touches F1 et F2.
-    </div>
-    
-    <div class="tips-container">
-        <div class="tips-title">ASTUCES DU JEU</div>
-        <div id="tips-content"></div>
-    </div>
-    
-    <div class="server-info">
-        <p class="server-text">
-            <span id="player-name-text" class="player-name-highlight">Joueur</span>, bienvenue sur 
-            <span class="server-name-highlight" id="server-name-text">NettyRP</span> ! Plongez dans un RP libre où tout est possible. 
-            Profitez d'un téléphone équipé d'un GPS. Explorez différents métiers en passant par le Pôle Emploi. 
-            Accédez rapidement à votre inventaire avec 'I-4' et ajoutez-y des armes grâce à 'ALT+C'. 
-            Fondé en octobre 2020, le serveur est en constante évolution pour offrir la meilleure expérience.
-            <br>Bon jeu !
-        </p>
-    </div>
-    
-    <div class="loading-bar-container">
-        <div class="loading-status">
-            <div class="loading-text" id="loading-status">Finalisation...</div>
-            <div class="loading-text" id="loading-percent">0%</div>
-        </div>
+    <div class="container">
+        <img src="" alt="Avatar" class="avatar" id="playerAvatar">
+        <div class="player-name" id="playerName">Chargement...</div>
         <div class="loading-bar">
-            <div class="loading-progress" id="loading-progress"></div>
+            <div class="progress"></div>
         </div>
+        <div class="loading-text">Chargement en cours...</div>
+        <div class="tip" id="tip"></div>
     </div>
-    
-    <div id="audio-control">
-        <button id="mute-button">🔊</button>
-        <input type="range" min="0" max="1" step="0.1" value="0.5" class="volume" id="volume-control">
-    </div>
-    
-    <button class="cancel-button" id="cancel-button">Annuler</button>
-    
-    <audio id="background-music" loop></audio>
-    
+
     <script>
-        // Configuration
-        const config = {
-            serverName: "NettyRP",
-            backgroundImage: "/api/placeholder/1920/1080",
-            musicUrl: "https://exemple.com/ta-musique.mp3",
-            instructionText: "Activez la troisième personne avec les touches F1 et F2.",
-            tips: [
-                "Pour accéder rapidement à votre inventaire, appuyez sur 'I-4'.",
-                "Utilisez ALT+C pour ajouter des armes à votre inventaire.",
-                "Le téléphone intégré dispose d'un GPS pour vous aider à naviguer.",
-                "Visitez le Pôle Emploi pour découvrir tous les métiers disponibles.",
-                "Essayez le Case Opening pour obtenir des objets rares !",
-                "Le système Farm 2 Win vous permet de progresser par vos efforts.",
-                "Utilisez la touche F3 pour voir vos statistiques actuelles.",
-                "Les objets du marché entre joueurs sont souvent moins chers que dans les magasins officiels."
-            ]
-        };
+        const tips = [
+            "Appuyez sur F4 pour ouvrir le menu",
+            "N'oubliez pas de lire les règles !",
+            "Besoin d'aide ? Contactez un administrateur",
+            "Amusez-vous bien sur notre serveur !"
+        ];
+
+        let currentTip = 0;
         
-        // Variables globales pour suivre le chargement
-        window.filesTotal = 100; // Valeur par défaut pour la démonstration
-        window.filesNeeded = 100; // Valeur par défaut pour la démonstration
-        
-        // Fonctions pour l'intégration avec GMod
-        
-        // Cette fonction est appelée par GMod quand le chargement commence
-        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode, volume) {
-            console.log("GameDetails appelé", servername, steamid);
-            document.getElementById('server-name-text').textContent = servername;
-            
-            // Obtenir l'avatar et le nom du joueur via le steamID
-            setPlayerAvatar(steamid);
-            setPlayerName(steamid);
-            
-            // Définir le volume
-            if (volume !== undefined) {
-                const audio = document.getElementById('background-music');
-                audio.volume = volume / 100;
-                document.getElementById('volume-control').value = volume / 100;
-            }
+        function updateTip() {
+            document.getElementById('tip').textContent = tips[currentTip];
+            currentTip = (currentTip + 1) % tips.length;
         }
-        
-        // Cette fonction est appelée par GMod pour mettre à jour le statut du chargement
-        function SetStatusChanged(status) {
-            document.getElementById('loading-status').textContent = status;
-        }
-        
-        // Cette fonction est appelée par GMod quand un fichier est téléchargé
-        function DownloadingFile(fileName) {
-            document.getElementById('loading-status').textContent = "Téléchargement: " + fileName;
-        }
-        
-        // Cette fonction est appelée par GMod pour définir le nombre total de fichiers
-        function SetFilesTotal(total) {
-            window.filesTotal = total;
-            updateProgress();
-        }
-        
-        // Cette fonction est appelée par GMod pour définir le nombre de fichiers restants
-        function SetFilesNeeded(needed) {
-            window.filesNeeded = needed;
-            updateProgress();
-        }
-        
-        // Mettre à jour la progression du chargement
-        function updateProgress() {
-            const progress = Math.max(0, Math.min(100, 100 * (1 - window.filesNeeded / window.filesTotal)));
-            document.getElementById('loading-progress').style.width = progress + "%";
-            document.getElementById('loading-percent').textContent = Math.round(progress) + "%";
-        }
-        
-        // Fonction pour définir le nom du joueur (appelée par GMod)
-        function setPlayerName(steamID) {
-            // Normalement, la fonction GetPlayerName() est fournie par GMod
-            // Pour que ça fonctionne, on commence par vérifier si la fonction existe
-            if (typeof gmod !== 'undefined' && gmod.getPlayerName) {
-                const playerName = gmod.getPlayerName();
-                updatePlayerNameUI(playerName);
-            } else {
-                // En mode demo, on utilise un nom par défaut
-                updatePlayerNameUI("NomDuJoueurSteam");
-            }
-        }
-        
-        // Fonction pour définir l'avatar du joueur (appelée par GMod)
-        function setPlayerAvatar(steamID) {
-            // Normalement, la fonction GetPlayerImage() est fournie par GMod
-            // Pour que ça fonctionne, on commence par vérifier si la fonction existe
-            if (typeof gmod !== 'undefined' && gmod.getPlayerImage) {
-                const avatarURL = gmod.getPlayerImage();
-                document.getElementById('steam-avatar').src = avatarURL;
-            } else {
-                // En mode demo, on laisse l'image par défaut
-            }
-        }
-        
-        // Mettre à jour l'UI avec le nom du joueur
-        function updatePlayerNameUI(playerName) {
-            const playerNameElements = document.querySelectorAll('#player-name, #player-name-text');
-            playerNameElements.forEach(element => {
-                element.textContent = playerName;
-            });
-        }
-        
-        // Initialisation de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Définir l'image de fond
-            document.getElementById('background').style.backgroundImage = `url('${config.backgroundImage}')`;
-            
-            // Définir les textes
-            document.getElementById('server-name-text').textContent = config.serverName;
-            document.getElementById('instruction-text').textContent = config.instructionText;
-            
-            // Configuration de la musique
-            const audio = document.getElementById('background-music');
-            audio.src = config.musicUrl;
-            audio.volume = 0.5;
-            
-            // Contrôle du son
-            const muteButton = document.getElementById('mute-button');
-            const volumeControl = document.getElementById('volume-control');
-            
-            muteButton.addEventListener('click', function() {
-                if (audio.paused) {
-                    audio.play();
-                    muteButton.textContent = '🔊';
-                } else {
-                    audio.pause();
-                    muteButton.textContent = '🔇';
-                }
-            });
-            
-            volumeControl.addEventListener('input', function() {
-                audio.volume = this.value;
-                if (audio.volume > 0 && audio.paused) {
-                    audio.play();
-                    muteButton.textContent = '🔊';
-                }
-            });
-            
-            // Initialiser les astuces
-            initTips();
-            
-            // Simulation de chargement pour la démonstration
-            // Dans un environnement GMod, cette simulation serait remplacée par les appels réels
-            if (typeof gmod === 'undefined') {
-                simulateGModLoading();
-            }
-            
-            // Bouton Annuler
-            document.getElementById('cancel-button').addEventListener('click', function() {
-                if (typeof gmod !== 'undefined' && gmod.cancelDownload) {
-                    gmod.cancelDownload();
-                } else {
-                    console.log("Annulation du chargement (démo)");
-                }
-            });
-            
-            // Pour la démo, simuler un appel GameDetails comme le ferait GMod
-            if (typeof gmod === 'undefined') {
-                setTimeout(() => {
-                    GameDetails("NettyRP", "exemple.com", "rp_downtown", 64, "76561198012345678", "darkrp", 50);
-                }, 500);
-            }
-        });
-        
-        // Système d'affichage des astuces
-        function initTips() {
-            const tipsContainer = document.getElementById('tips-content');
-            let currentTipIndex = 0;
-            
-            function showNextTip() {
-                // Effacer le contenu actuel
-                tipsContainer.innerHTML = '';
-                
-                // Créer un nouvel élément pour l'astuce
-                const tipElement = document.createElement('div');
-                tipElement.className = 'tip';
-                tipElement.textContent = config.tips[currentTipIndex];
-                tipsContainer.appendChild(tipElement);
-                
-                // Passer à l'astuce suivante
-                currentTipIndex = (currentTipIndex + 1) % config.tips.length;
-                
-                // Planifier la prochaine astuce
-                setTimeout(showNextTip, 5000);
-            }
-            
-            // Démarrer le cycle des astuces
-            showNextTip();
-        }
-        
-        // Simulation du chargement pour la démo (ignoré dans l'environnement GMod réel)
-        function simulateGModLoading() {
-            console.log("Simulation du chargement GMod pour la démonstration");
-            
-            // Simuler un nom de joueur
-            setTimeout(() => {
-                updatePlayerNameUI("NomDuJoueurSteam");
-            }, 1000);
-            
-            // Simuler la progression du chargement
-            const loadingStates = [
-                "Connexion au serveur...",
-                "Récupération des données du joueur...",
-                "Téléchargement: materials/models/player/custom.vtf",
-                "Téléchargement: lua/autorun/client/cl_init.lua",
-                "Préparation du monde...",
-                "Finalisation..."
-            ];
-            
-            let stateIndex = 0;
-            let progress = 0;
-            
-            const interval = setInterval(() => {
-                // Mettre à jour l'état
-                if (stateIndex < loadingStates.length && progress > stateIndex * 20) {
-                    document.getElementById('loading-status').textContent = loadingStates[stateIndex];
-                    stateIndex++;
-                }
-                
-                // Mettre à jour la progression
-                progress += Math.random() * 3;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                }
-                
-                // Mettre à jour la barre de progression
-                document.getElementById('loading-progress').style.width = progress + "%";
-                document.getElementById('loading-percent').textContent = Math.round(progress) + "%";
-                
-            }, 200);
-        }
+
+        // Changer le tip toutes les 5 secondes
+        updateTip();
+        setInterval(updateTip, 5000);
+
+        // Simuler le chargement des données du joueur
+        setTimeout(() => {
+            document.getElementById('playerName').textContent = 'NomDuJoueur';
+            document.getElementById('playerAvatar').src = 'URL_DE_LAVATAR';
+        }, 1000);
     </script>
 </body>
 </html>

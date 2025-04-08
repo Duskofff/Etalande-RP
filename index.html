@@ -32,6 +32,7 @@
             background-size: cover;
             background-position: center;
             filter: brightness(0.5);
+            transition: filter 2s ease;
         }
         
         .title-container {
@@ -42,16 +43,17 @@
             padding: 20px;
             text-align: center;
             z-index: 10;
+            animation: fadeIn 1.5s ease;
         }
         
         .title {
             font-size: 4em;
             font-weight: bold;
             text-transform: uppercase;
-            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 255, 255, 0.5);
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 85, 85, 0.7);
             color: #ffffff;
             margin-bottom: 10px;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
         }
         
         .subtitle {
@@ -63,7 +65,7 @@
         .tagline {
             font-size: 3em;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 85, 85, 0.5);
         }
         
         .profile-container {
@@ -75,15 +77,22 @@
             flex-direction: column;
             align-items: center;
             z-index: 1;
+            animation: pulseGlow 3s infinite alternate;
         }
         
         .profile-image {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
-            border: 5px solid rgba(255, 255, 255, 0.3);
+            border: 5px solid rgba(255, 85, 85, 0.6);
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 150, 255, 0.8);
+            box-shadow: 0 0 25px rgba(255, 85, 85, 0.8);
+            transition: all 0.5s ease;
+        }
+        
+        .profile-image:hover {
+            box-shadow: 0 0 35px rgba(255, 85, 85, 1);
+            transform: scale(1.05);
         }
         
         .profile-image img {
@@ -94,10 +103,10 @@
         
         .player-name {
             margin-top: 15px;
-            font-size: 1.8em;
+            font-size: 2em;
             font-weight: bold;
             color: #ffffff;
-            text-shadow: 0 0 10px rgba(0, 150, 255, 0.8);
+            text-shadow: 0 0 10px rgba(255, 85, 85, 0.8);
         }
         
         .instruction {
@@ -105,10 +114,11 @@
             bottom: 40%;
             width: 100%;
             text-align: center;
-            font-size: 1.5em;
+            font-size: 1.6em;
             color: #ffffff;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
             z-index: 1;
+            animation: float 3s ease-in-out infinite;
         }
         
         .server-info {
@@ -117,7 +127,7 @@
             left: 0;
             width: 100%;
             background-color: rgba(0, 0, 0, 0.8);
-            padding: 15px;
+            padding: 20px;
             color: #ffffff;
             text-align: center;
             z-index: 1;
@@ -126,66 +136,70 @@
         .server-text {
             max-width: 80%;
             margin: 0 auto;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-size: 1.1em;
         }
         
         .player-name-highlight {
             color: #ff5555;
             font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 85, 85, 0.5);
         }
         
         .server-name-highlight {
             color: #ff5555;
             font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 85, 85, 0.5);
         }
         
         .loading-bar-container {
             position: absolute;
-            bottom: 60px;
-            right: 20px;
-            width: 300px;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
             background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 5px;
-            padding: 10px;
+            border-radius: 10px;
+            padding: 15px;
             z-index: 1;
+            box-shadow: 0 0 15px rgba(255, 85, 85, 0.4);
         }
         
         .loading-text {
-            font-size: 0.9em;
-            margin-bottom: 5px;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #f0f0f0;
         }
         
         .loading-bar {
-            height: 20px;
+            height: 25px;
             background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
+            border-radius: 10px;
             overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
         
         .loading-progress {
             height: 100%;
             width: 0%;
-            background-color: #ff5555;
-            border-radius: 5px;
+            background: linear-gradient(90deg, #ff3333, #ff5555, #ff7777);
+            border-radius: 10px;
             transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
-        .buttons-container {
+        .loading-progress::after {
+            content: '';
             position: absolute;
-            bottom: 10px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 1;
-        }
-        
-        .button {
-            background-color: rgba(0, 0, 0, 0.7);
-            border: none;
-            color: #fff;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                            transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 1.5s infinite;
         }
         
         #audio-control {
@@ -193,11 +207,12 @@
             bottom: 20px;
             left: 20px;
             background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             z-index: 2;
+            box-shadow: 0 0 10px rgba(255, 85, 85, 0.5);
         }
         
         #audio-control button {
@@ -206,11 +221,91 @@
             color: white;
             font-size: 1.5em;
             cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        #audio-control button:hover {
+            transform: scale(1.1);
+            color: #ff5555;
         }
         
         #audio-control .volume {
             margin-left: 10px;
             width: 100px;
+            -webkit-appearance: none;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        #audio-control .volume::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #ff5555;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(255, 85, 85, 0.8);
+        }
+        
+        .credits {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.5);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes pulseGlow {
+            0% { filter: drop-shadow(0 0 15px rgba(255, 85, 85, 0.5)); }
+            100% { filter: drop-shadow(0 0 25px rgba(255, 85, 85, 0.8)); }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .tips-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1;
+            box-shadow: 0 0 15px rgba(255, 85, 85, 0.4);
+        }
+        
+        .tips-title {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #ff5555;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .tip {
+            margin-bottom: 10px;
+            line-height: 1.4;
+            font-size: 0.9em;
+            opacity: 0;
+            animation: fadeTip 0.5s forwards;
         }
     </style>
 </head>
@@ -225,13 +320,18 @@
     
     <div class="profile-container">
         <div class="profile-image">
-            <img id="steam-avatar" src="/api/placeholder/150/150" alt="Avatar Steam">
+            <img id="steam-avatar" src="/api/placeholder/180/180" alt="Avatar Steam">
         </div>
         <div class="player-name" id="player-name">Chargement...</div>
     </div>
     
     <div class="instruction" id="instruction-text">
         Activez la troisième personne avec les touches F1 et F2.
+    </div>
+    
+    <div class="tips-container">
+        <div class="tips-title">ASTUCES DU JEU</div>
+        <div id="tips-content"></div>
     </div>
     
     <div class="server-info">
@@ -246,20 +346,18 @@
     </div>
     
     <div class="loading-bar-container">
-        <div class="loading-text">Récupération des infos serveur...</div>
+        <div class="loading-text" id="loading-status">Récupération des infos serveur...</div>
         <div class="loading-bar">
             <div class="loading-progress" id="loading-progress"></div>
         </div>
-    </div>
-    
-    <div class="buttons-container">
-        <button class="button" id="cancel-button">Annuler</button>
     </div>
     
     <div id="audio-control">
         <button id="mute-button">🔊</button>
         <input type="range" min="0" max="1" step="0.1" value="0.5" class="volume" id="volume-control">
     </div>
+    
+    <div class="credits">NettyRP © 2025</div>
     
     <audio id="background-music" loop></audio>
     
@@ -268,14 +366,26 @@
         const config = {
             // Informations du serveur
             serverName: "NettyRP",
-            // URL de l'image de fond (remplace par ton lien Imgur)
+            // URL de l'image de fond (remplace par ton lien)
             backgroundImage: "/api/placeholder/1920/1080",
             // URL de la musique de fond
             musicUrl: "https://exemple.com/ta-musique.mp3",
             // Instructions à afficher
             instructionText: "Activez la troisième personne avec les touches F1 et F2.",
             // Message d'info serveur
-            serverInfoTemplate: "{playerName}, bienvenue sur {serverName} ! Plongez dans un RP libre où tout est possible. Profitez d'un téléphone équipé d'un GPS. Explorez différents métiers en passant par le Pôle Emploi. Accédez rapidement à votre inventaire avec 'I-4' et ajoutez-y des armes grâce à 'ALT+C'. Fondé en octobre 2020, le serveur est en constante évolution pour offrir la meilleure expérience.<br>Bon jeu !"
+            serverInfoTemplate: "{playerName}, bienvenue sur {serverName} ! Plongez dans un RP libre où tout est possible. Profitez d'un téléphone équipé d'un GPS. Explorez différents métiers en passant par le Pôle Emploi. Accédez rapidement à votre inventaire avec 'I-4' et ajoutez-y des armes grâce à 'ALT+C'. Fondé en octobre 2020, le serveur est en constante évolution pour offrir la meilleure expérience.<br>Bon jeu !",
+            // Astuces qui s'afficheront
+            tips: [
+                "Pour accéder rapidement à votre inventaire, appuyez sur 'I-4'.",
+                "Utilisez ALT+C pour ajouter des armes à votre inventaire.",
+                "Le téléphone intégré dispose d'un GPS pour vous aider à naviguer.",
+                "Visitez le Pôle Emploi pour découvrir tous les métiers disponibles.",
+                "Essayez le Case Opening pour obtenir des objets rares !",
+                "Le système Farm 2 Win vous permet de progresser par vos efforts.",
+                "Utilisez la touche F3 pour voir vos statistiques actuelles.",
+                "Les objets du marché entre joueurs sont souvent moins chers que dans les magasins officiels.",
+                "Rejoignez notre Discord pour rester informé des événements."
+            ]
         };
         
         // Initialisation
@@ -314,21 +424,56 @@
                 }
             });
             
-            // Essayer de jouer la musique automatiquement (peut être bloqué par le navigateur)
+            // Essayer de jouer la musique automatiquement
             document.body.addEventListener('click', function() {
                 if (audio.paused) {
                     audio.play().catch(e => console.log('Lecture automatique non autorisée'));
                 }
             }, { once: true });
             
-            // Simulation de chargement
+            // Initialiser les astuces
+            initTips();
+            
+            // Pour la démonstration, simuler le chargement
+            // Dans un environnement GMod réel, cette fonction serait remplacée
+            // par les événements natifs de GMod
             simulateLoading();
         });
         
-        // Pour un vrai écran de chargement GMod
+        // Système d'affichage des astuces
+        function initTips() {
+            const tipsContainer = document.getElementById('tips-content');
+            let currentTipIndex = 0;
+            
+            function showNextTip() {
+                // Effacer le contenu actuel
+                tipsContainer.innerHTML = '';
+                
+                // Créer un nouvel élément pour l'astuce
+                const tipElement = document.createElement('div');
+                tipElement.className = 'tip';
+                tipElement.textContent = config.tips[currentTipIndex];
+                tipsContainer.appendChild(tipElement);
+                
+                // Passer à l'astuce suivante
+                currentTipIndex = (currentTipIndex + 1) % config.tips.length;
+                
+                // Planifier la prochaine astuce
+                setTimeout(showNextTip, 5000);
+            }
+            
+            // Démarrer le cycle des astuces
+            showNextTip();
+        }
+        
+        // Fonctions nécessaires pour l'intégration avec GMod
+        
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode, volume) {
             // Cette fonction est appelée par GMod pour fournir les détails du serveur
             document.getElementById('server-name-text').textContent = servername;
+            
+            // Charger les informations du joueur
+            LoadPlayerInfo(steamid);
             
             // Définir le volume si fourni
             if (typeof volume !== 'undefined') {
@@ -340,12 +485,12 @@
         
         function SetStatusChanged(status) {
             // Cette fonction est appelée par GMod pour mettre à jour le statut
-            document.querySelector('.loading-text').textContent = status;
+            document.getElementById('loading-status').textContent = status;
         }
         
         function DownloadingFile(fileName) {
             // Cette fonction est appelée par GMod lorsqu'un fichier est en cours de téléchargement
-            document.querySelector('.loading-text').textContent = `Téléchargement: ${fileName}`;
+            document.getElementById('loading-status').textContent = `Téléchargement: ${fileName}`;
         }
         
         function SetFilesTotal(total) {
@@ -366,13 +511,22 @@
             }
         }
         
-        // Fonction pour simuler le chargement (pour la démo)
+        // Fonction pour simuler le chargement (pour la démo seulement)
         function simulateLoading() {
             let progress = 0;
             const progressBar = document.getElementById('loading-progress');
+            const loadingStatus = document.getElementById('loading-status');
+            const statusMessages = [
+                "Connexion au serveur...",
+                "Récupération des données du joueur...",
+                "Chargement des ressources du jeu...",
+                "Initialisation de l'environnement RP...",
+                "Préparation des systèmes économiques...",
+                "Chargement des cases et du marché...",
+                "Finalisation..."
+            ];
+            let currentStatus = 0;
             
-            // Dans un vrai serveur GMod, tu remplacerais cette fonction
-            // par celle qui communique avec l'API de GMod pour obtenir la progression réelle
             const interval = setInterval(() => {
                 progress += Math.random() * 2;
                 if (progress >= 100) {
@@ -380,32 +534,51 @@
                     clearInterval(interval);
                 }
                 
+                // Mettre à jour la barre de progression
                 progressBar.style.width = `${progress}%`;
+                
+                // Changer le message de statut à différentes étapes
+                if (progress > currentStatus * 15 && currentStatus < statusMessages.length) {
+                    loadingStatus.textContent = statusMessages[currentStatus];
+                    currentStatus++;
+                }
             }, 200);
         }
         
-        // Fonction pour récupérer l'avatar Steam (dans un vrai environnement GMod)
+        // Fonction pour récupérer l'avatar Steam et le nom du joueur
         function LoadPlayerInfo(steamid64) {
-            // Dans un vrai écran de chargement, ici tu ferais une requête à l'API Steam
-            // pour récupérer les informations du joueur, y compris son avatar et son nom
+            // Dans un vrai écran de chargement GMod, cette fonction utiliserait
+            // l'API de GMod pour obtenir le nom et l'avatar du joueur
             
-            // Pour la démo, on simule que l'on a récupéré ces informations
-            document.getElementById('player-name').textContent = "ethannedgmod";
-            document.getElementById('player-name-text').textContent = "ethannedgmod";
+            // Pour la démonstration, on simule un chargement
+            // Dans un environnement GMod réel, ces lignes seraient remplacées
+            // par le code qui récupère les informations réelles du joueur
             
-            // Dans un environnement réel, tu remplacerais ceci par l'URL réelle de l'avatar Steam
-            // document.getElementById('steam-avatar').src = `https://avatars.steamstatic.com/...`;
+            // L'avatar et le nom du joueur seront automatiquement mis à jour
+            // par GMod quand cette fonction est appelée avec le steamid64 du joueur
+            
+            // Note: Dans GMod, tu peux utiliser les fonctions natives pour obtenir ces informations
+            
+            // Pour la démo seulement:
+            setTimeout(() => {
+                const playerName = GetPlayerName(); // Dans GMod, cette fonction existe déjà
+                document.getElementById('player-name').textContent = playerName;
+                document.getElementById('player-name-text').textContent = playerName;
+            }, 1500);
         }
         
-        // Simuler la récupération des informations du joueur après un court délai
-        setTimeout(LoadPlayerInfo, 1500);
+        // Fonctions de démonstration qui seraient remplacées dans un environnement GMod réel
+        function GetPlayerName() {
+            // Dans GMod, cette fonction retournerait le vrai nom du joueur Steam
+            return "NomDuJoueurSteam";
+        }
         
-        // Pour que le bouton Annuler fonctionne
-        document.getElementById('cancel-button').addEventListener('click', function() {
-            // Dans un vrai environnement GMod, cette fonction appellerait une fonction de GMod
-            // pour annuler le chargement et retourner au menu
-            alert("Fonction d'annulation (serait connectée à GMod dans un vrai environnement)");
-        });
+        function GetPlayerAvatar() {
+            // Dans GMod, cette fonction retournerait l'URL de l'avatar du joueur
+            // Pour un écran de chargement GMod réel, cette fonction serait remplacée
+            // par le code qui récupère l'avatar via l'API de Steam
+            return "/api/placeholder/180/180";
+        }
     </script>
 </body>
 </html>

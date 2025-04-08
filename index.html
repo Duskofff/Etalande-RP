@@ -1,423 +1,455 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <title>Chargement du serveur</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Écran de chargement GMod</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #1a1a1a;
-            color: #fff;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: #ffffff;
             overflow: hidden;
-        }
-
-        .container {
-            display: flex;
             height: 100vh;
-        }
-
-        .sidebar {
-            width: 25%;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
         }
-
-        .main-content {
-            width: 75%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .slideshow {
+        
+        #background {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-        }
-
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
+            z-index: -1;
             background-size: cover;
             background-position: center;
+            filter: brightness(0.4);
+            transition: opacity 1s ease;
         }
-
-        .slide.active {
-            opacity: 1;
+        
+        .header {
+            padding: 20px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: relative;
+            z-index: 1;
         }
-
-        .server-info {
-            margin-bottom: 30px;
-        }
-
-        .server-name {
-            font-size: 28px;
-            font-weight: bold;
+        
+        .header h1 {
+            font-size: 3em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             margin-bottom: 10px;
-            color: #ff7700;
-            text-shadow: 0 0 10px rgba(255, 119, 0, 0.7);
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.8);
         }
-
-        .server-description {
-            font-size: 16px;
-            color: #dddddd;
-            line-height: 1.4;
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.8;
         }
-
-        .player-info {
+        
+        .content {
+            flex-grow: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 30px;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
         }
-
-        .avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-right: 15px;
-            border: 3px solid #ff7700;
-            box-shadow: 0 0 10px rgba(255, 119, 0, 0.7);
-        }
-
-        .player-name {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .steam-id {
-            font-size: 14px;
-            color: #aaaaaa;
-        }
-
-        .loading-bar-container {
-            width: 100%;
-            height: 20px;
-            background-color: rgba(255, 255, 255, 0.1);
+        
+        .loading-container {
+            width: 80%;
+            max-width: 800px;
+            background-color: rgba(0, 0, 0, 0.6);
             border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 10px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.3);
         }
-
-        .loading-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff7700, #ffaa00);
-            border-radius: 10px;
-            transition: width 0.2s ease-out;
-            box-shadow: 0 0 10px rgba(255, 119, 0, 0.7);
-        }
-
-        .loading-text {
+        
+        .loading-info {
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
-            color: #bbbbbb;
-        }
-
-        .rules {
-            margin-top: 30px;
-        }
-
-        .rules-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #ff7700;
             margin-bottom: 10px;
         }
-
-        .rules-list {
-            font-size: 14px;
-            color: #dddddd;
-            line-height: 1.6;
+        
+        .loading-bar {
+            height: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
         }
-
-        .rules-list li {
-            margin-bottom: 8px;
+        
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0062ff, #00c3ff);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 150, 255, 0.8);
         }
-
-        .footer {
-            font-size: 12px;
-            color: #777777;
+        
+        .loading-status {
+            margin-top: 15px;
             text-align: center;
-            margin-top: auto;
+            font-style: italic;
+            opacity: 0.8;
+        }
+        
+        .server-info {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        
+        .info-box {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            padding: 15px;
+            min-width: 200px;
+            margin: 10px;
+            text-align: center;
+            border-left: 3px solid #0096ff;
+        }
+        
+        .info-box h3 {
+            margin-bottom: 10px;
+            color: #0096ff;
+        }
+        
+        .footer {
+            padding: 15px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            font-size: 0.9em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .rules {
+            position: absolute;
+            right: 20px;
+            bottom: 80px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            max-width: 300px;
+            z-index: 1;
+            border-left: 3px solid #0096ff;
+        }
+        
+        .rules h3 {
+            margin-bottom: 10px;
+            color: #0096ff;
+        }
+        
+        .rules ul {
+            padding-left: 20px;
+            opacity: 0.8;
+        }
+        
+        .rules li {
+            margin-bottom: 5px;
+        }
+        
+        #audio-control {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            z-index: 2;
+        }
+        
+        #audio-control button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        
+        #audio-control .volume {
+            margin-left: 10px;
+            width: 100px;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <div>
-                <div class="server-info">
-                    <div class="server-name">NOM DE TON SERVEUR</div>
-                    <div class="server-description">
-                        Bienvenue sur notre serveur Garry's Mod ! Nous offrons une expérience unique avec des modes de jeu personnalisés et une communauté amicale.
-                    </div>
-                </div>
-
-                <div class="player-info">
-                    <img class="avatar" id="player-avatar" src="">
-                    <div>
-                        <div class="player-name" id="player-name">Chargement...</div>
-                        <div class="steam-id" id="player-steamid">SteamID: Chargement...</div>
-                    </div>
-                </div>
-
-                <div class="loading-status">
-                    <div class="loading-bar-container">
-                        <div class="loading-bar" id="loading-bar"></div>
-                    </div>
-                    <div class="loading-text">
-                        <span id="loading-status-text">Connexion au serveur...</span>
-                        <span id="loading-percentage">0%</span>
-                    </div>
-                </div>
+    <div id="background"></div>
+    
+    <div class="header">
+        <h1>Nom de ton serveur</h1>
+        <p>Une expérience de jeu unique sur Garry's Mod</p>
+    </div>
+    
+    <div class="content">
+        <div class="loading-container">
+            <div class="loading-info">
+                <span>Chargement en cours...</span>
+                <span id="progress-text">0%</span>
             </div>
-
-            <div class="rules">
-                <div class="rules-title">Règles du Serveur</div>
-                <ol class="rules-list">
-                    <li>Respectez tous les joueurs et staff</li>
-                    <li>Pas de triche ou d'exploits</li>
-                    <li>Pas de spam ou de flood dans le chat</li>
-                    <li>Pas de publicité pour d'autres serveurs</li>
-                    <li>Amusez-vous et faites preuve de fair-play !</li>
-                </ol>
+            <div class="loading-bar">
+                <div class="loading-progress" id="progress-bar"></div>
             </div>
-
-            <div class="footer">
-                © 2025 NOM DE TON SERVEUR - Tous droits réservés
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div class="slideshow" id="slideshow">
-                <!-- Les images seront chargées dynamiquement -->
+            <div class="loading-status" id="status-text">Téléchargement des fichiers du serveur...</div>
+            
+            <div class="server-info">
+                <div class="info-box">
+                    <h3>Joueurs</h3>
+                    <p>0/32</p>
+                </div>
+                <div class="info-box">
+                    <h3>Mode de jeu</h3>
+                    <p>DarkRP</p>
+                </div>
+                <div class="info-box">
+                    <h3>Map</h3>
+                    <p>rp_downtown_v4c</p>
+                </div>
             </div>
         </div>
     </div>
-
+    
+    <div class="rules">
+        <h3>Règles du serveur</h3>
+        <ul>
+            <li>Respectez les autres joueurs</li>
+            <li>Pas de spam ou de flood</li>
+            <li>Pas de triche ou d'exploit</li>
+            <li>Respectez le RP</li>
+            <li>Amusez-vous !</li>
+        </ul>
+    </div>
+    
+    <div id="audio-control">
+        <button id="mute-button">🔊</button>
+        <input type="range" min="0" max="1" step="0.1" value="0.5" class="volume" id="volume-control">
+    </div>
+    
+    <div class="footer">
+        <p>© 2025 Ton Serveur GMod - Tous droits réservés</p>
+    </div>
+    
+    <audio id="background-music" loop></audio>
+    
     <script>
-        // Configuration (à personnaliser)
+        // Configuration (Modifie ces valeurs)
         const config = {
-            serverName: "NOM DE TON SERVEUR",
-            serverDescription: "Bienvenue sur notre serveur Garry's Mod ! Nous offrons une expérience unique avec des modes de jeu personnalisés et une communauté amicale.",
-            images: [
-                "https://exemple.com/image1.jpg", // Remplace par tes propres URLs d'images
-                "https://exemple.com/image2.jpg",
-                "https://exemple.com/image3.jpg",
-                "https://exemple.com/image4.jpg"
+            serverName: "Ton Super Serveur GMod",
+            serverDescription: "Une expérience de jeu unique sur Garry's Mod",
+            gamemode: "DarkRP",
+            map: "rp_downtown_v4c", 
+            maxPlayers: 32,
+            background: {
+                // Tu peux ajouter autant d'images que tu veux
+                images: [
+                    // Remplace ces liens par tes propres images (locales ou imgur)
+                    "/api/placeholder/1920/1080",
+                    "/api/placeholder/1920/1080",
+                    "/api/placeholder/1920/1080"
+                ],
+                changeInterval: 5000 // Temps en millisecondes entre chaque changement d'image
+            },
+            // Mets ici le lien vers ta musique
+            musicUrl: "https://exemple.com/ta-musique.mp3",
+            // Messages de statut qui s'afficheront aléatoirement
+            loadingMessages: [
+                "Préparation du monde...",
+                "Chargement des addons...",
+                "Initialisation des props...",
+                "Préparation des armes...",
+                "Chargement des textures...",
+                "Configuration des véhicules...",
+                "Connexion à la base de données...",
+                "Téléchargement des fichiers de jeu..."
             ],
             rules: [
-                "Respectez tous les joueurs et staff",
-                "Pas de triche ou d'exploits",
-                "Pas de spam ou de flood dans le chat",
-                "Pas de publicité pour d'autres serveurs",
-                "Amusez-vous et faites preuve de fair-play !"
-            ],
-            slideshowInterval: 5000, // Intervalle en ms pour le changement d'image
-            accentColor: "#ff7700" // Couleur principale du thème
+                "Respectez les autres joueurs",
+                "Pas de spam ou de flood",
+                "Pas de triche ou d'exploit",
+                "Respectez le RP",
+                "Amusez-vous !"
+            ]
         };
-
-        // Variables pour les éléments DOM
-        let loadingBar = document.getElementById("loading-bar");
-        let loadingPercentage = document.getElementById("loading-percentage");
-        let loadingStatusText = document.getElementById("loading-status-text");
-        let playerAvatar = document.getElementById("player-avatar");
-        let playerName = document.getElementById("player-name");
-        let playerSteamID = document.getElementById("player-steamid");
-        let slideshow = document.getElementById("slideshow");
-
-        // Fonction pour créer le diaporama
-        function setupSlideshow() {
-            config.images.forEach((imageUrl, index) => {
-                const slide = document.createElement("div");
-                slide.className = "slide";
-                slide.style.backgroundImage = `url(${imageUrl})`;
-                
-                if (index === 0) {
-                    slide.classList.add("active");
-                }
-                
-                slideshow.appendChild(slide);
-            });
-        }
-
-        // Fonction pour faire défiler les images
-        function startSlideshow() {
-            let slides = document.querySelectorAll(".slide");
-            let currentSlide = 0;
-            
-            setInterval(() => {
-                slides[currentSlide].classList.remove("active");
-                currentSlide = (currentSlide + 1) % slides.length;
-                slides[currentSlide].classList.add("active");
-            }, config.slideshowInterval);
-        }
-
-        // Fonction pour mettre à jour la barre de chargement
-        function updateLoadingBar(percentage, status) {
-            if (percentage !== null) {
-                loadingBar.style.width = percentage + "%";
-                loadingPercentage.textContent = percentage + "%";
-            }
-            
-            if (status) {
-                loadingStatusText.textContent = status;
-            }
-        }
-
-        // Fonctions pour l'API GMod LoadingScreen
-        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-            // Mise à jour des informations du serveur
-            document.querySelector(".server-name").textContent = servername || config.serverName;
-            
-            // Mise à jour du SteamID du joueur
-            playerSteamID.textContent = "SteamID: " + steamid;
-            
-            // Appel spécifique pour l'avatar et le nom
-            GetPlayerInformation();
-            
-            updateLoadingBar(5, "Connexion au serveur...");
-        }
-
-        function SetStatusChanged(status) {
-            updateLoadingBar(null, status);
-        }
-
-        function SetFilesTotal(total) {
-            window.filesTotal = total;
-        }
-
-        function SetFilesNeeded(needed) {
-            window.filesNeeded = needed;
-            
-            if (window.filesTotal) {
-                const percentage = Math.round(((window.filesTotal - needed) / window.filesTotal) * 100);
-                updateLoadingBar(percentage, "Téléchargement des fichiers...");
-            }
-        }
-
-        function DownloadingFile(filename) {
-            updateLoadingBar(null, "Téléchargement: " + filename);
-        }
-
-        // Fonction pour obtenir l'avatar et le nom du joueur
-        function GetPlayerInformation() {
-            // Cette fonction utilise les API de Garry's Mod pour récupérer les infos du joueur
-            if (typeof gmod !== 'undefined') {
-                // Récupération du nom et steamID du joueur connecté
-                const name = gmod.GetPlayerName();
-                const steamID64 = gmod.GetPlayerSteamID();
-                
-                // Mise à jour du nom du joueur
-                playerName.textContent = name || "Joueur inconnu";
-                
-                // Si le SteamID n'a pas été défini par GameDetails, on le fait ici
-                if (playerSteamID.textContent === "SteamID: Chargement...") {
-                    playerSteamID.textContent = "SteamID: " + steamID64;
-                }
-                
-                // Récupération de l'avatar du joueur
-                // Format de l'URL d'avatar Steam: https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/...
-                if (steamID64 && steamID64.length > 0) {
-                    // Utilisation de l'API Steam pour obtenir l'avatar
-                    playerAvatar.src = `https://steamcommunity.com/profiles/${steamID64}/avatar`;
-                    
-                    // Alternative: si l'avatar ne se charge pas, on peut utiliser une approche différente
-                    playerAvatar.onerror = function() {
-                        // Utilisation du service d'avatar de Garry's Mod
-                        this.src = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=YOURKEYHERE&steamids=${steamID64}`;
-                        
-                        // Si cette méthode échoue également, on utilise un avatar par défaut
-                        this.onerror = function() {
-                            this.src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg";
-                        };
-                    };
-                } else {
-                    // Avatar par défaut si le SteamID n'est pas disponible
-                    playerAvatar.src = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg";
-                }
-            } else {
-                // Mode test - cette partie sera ignorée en production
-                console.log("Mode test - gmod API non disponible");
-            }
-        }
-
+        
         // Initialisation
-        document.addEventListener("DOMContentLoaded", function() {
-            // Configuration du serveur
-            document.querySelector(".server-name").textContent = config.serverName;
-            document.querySelector(".server-description").textContent = config.serverDescription;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mettre à jour les informations du serveur
+            document.querySelector('.header h1').textContent = config.serverName;
+            document.querySelector('.header p').textContent = config.serverDescription;
+            document.querySelector('.info-box:nth-child(2) p').textContent = config.gamemode;
+            document.querySelector('.info-box:nth-child(3) p').textContent = config.map;
+            document.querySelector('.info-box:nth-child(1) p').textContent = `0/${config.maxPlayers}`;
             
-            // Configuration des règles
-            const rulesList = document.querySelector(".rules-list");
-            rulesList.innerHTML = "";
+            // Mettre à jour les règles
+            const rulesList = document.querySelector('.rules ul');
+            rulesList.innerHTML = '';
             config.rules.forEach(rule => {
-                const li = document.createElement("li");
+                const li = document.createElement('li');
                 li.textContent = rule;
                 rulesList.appendChild(li);
             });
             
-            // Configuration du pied de page
-            document.querySelector(".footer").textContent = `© ${new Date().getFullYear()} ${config.serverName} - Tous droits réservés`;
+            // Rotation des images de fond
+            let currentImageIndex = 0;
             
-            // Mise en place du diaporama
-            setupSlideshow();
-            startSlideshow();
-            
-            // Vérification si gmod est disponible
-            if (typeof gmod === 'undefined') {
-                // Mode test - simulation pour le développement
-                console.log("Mode test activé");
-                playerAvatar.src = "https://avatars.akamai.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg";
-                playerName.textContent = "Joueur Test";
-                playerSteamID.textContent = "SteamID: STEAM_0:1:12345678";
+            function changeBackground() {
+                const newImageIndex = (currentImageIndex + 1) % config.background.images.length;
+                const nextBg = document.createElement('div');
+                nextBg.id = 'background-next';
+                nextBg.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: -2;
+                    background-image: url('${config.background.images[newImageIndex]}');
+                    background-size: cover;
+                    background-position: center;
+                    filter: brightness(0.4);
+                    opacity: 0;
+                    transition: opacity 1s ease;
+                `;
+                document.body.appendChild(nextBg);
                 
-                // Simulation du chargement
-                simulateLoading();
-            } else {
-                // En production, ces informations seront fournies par GMod
-                console.log("Mode production activé");
-                GetPlayerInformation();
+                setTimeout(() => {
+                    nextBg.style.opacity = '1';
+                    setTimeout(() => {
+                        document.getElementById('background').style.backgroundImage = `url('${config.background.images[newImageIndex]}')`;
+                        document.body.removeChild(nextBg);
+                        currentImageIndex = newImageIndex;
+                    }, 1000);
+                }, 100);
             }
-        });
-
-        // Fonction pour simuler le chargement (uniquement pour le mode test)
-        function simulateLoading() {
-            let percentage = 0;
-            const loadingSteps = [
-                "Connexion au serveur...",
-                "Téléchargement des ressources...",
-                "Chargement des addons...",
-                "Préparation du monde...",
-                "Presque prêt..."
-            ];
             
+            // Définir la première image
+            document.getElementById('background').style.backgroundImage = `url('${config.background.images[0]}')`;
+            // Démarrer la rotation des images
+            setInterval(changeBackground, config.background.changeInterval);
+            
+            // Configuration de la musique
+            const audio = document.getElementById('background-music');
+            audio.src = config.musicUrl;
+            audio.volume = 0.5;
+            
+            // Contrôle du son
+            const muteButton = document.getElementById('mute-button');
+            const volumeControl = document.getElementById('volume-control');
+            
+            muteButton.addEventListener('click', function() {
+                if (audio.paused) {
+                    audio.play();
+                    muteButton.textContent = '🔊';
+                } else {
+                    audio.pause();
+                    muteButton.textContent = '🔇';
+                }
+            });
+            
+            volumeControl.addEventListener('input', function() {
+                audio.volume = this.value;
+                if (audio.volume > 0 && audio.paused) {
+                    audio.play();
+                    muteButton.textContent = '🔊';
+                }
+            });
+            
+            // Essayer de jouer la musique automatiquement (peut être bloqué par le navigateur)
+            document.body.addEventListener('click', function() {
+                if (audio.paused) {
+                    audio.play().catch(e => console.log('Lecture automatique non autorisée'));
+                }
+            }, { once: true });
+            
+            // Simulation de chargement pour la démo
+            simulateLoading();
+            
+            // Changement aléatoire des messages de statut
+            function changeLoadingMessage() {
+                const statusText = document.getElementById('status-text');
+                const randomIndex = Math.floor(Math.random() * config.loadingMessages.length);
+                statusText.textContent = config.loadingMessages[randomIndex];
+            }
+            
+            setInterval(changeLoadingMessage, 3000);
+        });
+        
+        // Fonction pour simuler le chargement
+        function simulateLoading() {
+            let progress = 0;
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            
+            // Dans un vrai serveur GMod, tu remplacerais cette fonction
+            // par celle qui communique avec l'API de GMod pour obtenir la progression réelle
             const interval = setInterval(() => {
-                percentage += Math.floor(Math.random() * 5) + 1;
-                
-                if (percentage >= 100) {
-                    percentage = 100;
+                progress += Math.random() * 2;
+                if (progress >= 100) {
+                    progress = 100;
                     clearInterval(interval);
                 }
                 
-                const statusIndex = Math.min(Math.floor(percentage / 20), loadingSteps.length - 1);
-                updateLoadingBar(percentage, loadingSteps[statusIndex]);
-            }, 500);
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.floor(progress)}%`;
+            }, 200);
+        }
+        
+        // Pour un vrai écran de chargement GMod, tu devrais utiliser les fonctions
+        // GameDetails et SetStatusChanged fournies par Garry's Mod
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            // Cette fonction est appelée par GMod pour fournir les détails du serveur
+            document.querySelector('.info-box:nth-child(2) p').textContent = gamemode;
+            document.querySelector('.info-box:nth-child(3) p').textContent = mapname;
+            document.querySelector('.info-box:nth-child(1) p').textContent = `0/${maxplayers}`;
+        }
+        
+        function SetStatusChanged(status) {
+            // Cette fonction est appelée par GMod pour mettre à jour le statut
+            document.getElementById('status-text').textContent = status;
+        }
+        
+        function SetFilesTotal(total) {
+            // Nombre total de fichiers à télécharger
+            window.filesTotal = total;
+        }
+        
+        function SetFilesNeeded(needed) {
+            // Nombre de fichiers restants à télécharger
+            window.filesNeeded = needed;
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            if (window.filesTotal > 0) {
+                const progress = 100 * (1 - window.filesNeeded / window.filesTotal);
+                document.getElementById('progress-bar').style.width = `${progress}%`;
+                document.getElementById('progress-text').textContent = `${Math.floor(progress)}%`;
+            }
         }
     </script>
 </body>

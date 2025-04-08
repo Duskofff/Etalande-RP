@@ -12,13 +12,24 @@
             overflow: hidden;
         }
 
-        #background-video {
+        .background-slideshow {
             position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
+            width: 100%;
+            height: 100%;
             z-index: -1;
+        }
+
+        .background-slideshow img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .background-slideshow img.active {
+            opacity: 1;
         }
 
         .container {
@@ -42,6 +53,7 @@
             height: 128px;
             border-radius: 50%;
             margin-bottom: 10px;
+            border: 3px solid #fff;
         }
 
         .loading-bar {
@@ -69,10 +81,12 @@
     </style>
 </head>
 <body>
-    <!-- Remplacer VIDEO_URL par le lien de ta vidéo de fond -->
-    <video id="background-video" autoplay muted loop>
-        <source src="https://www.youtube.com/watch?v=tpEwKGcZ6qk" type="video/mp4">
-    </video>
+    <div class="background-slideshow">
+        <!-- Remplace ces URLs par tes liens d'images -->
+        <img src="image1.jpg">
+        <img src="image2.jpg">
+        <img src="image3.jpg">
+    </div>
 
     <div class="container">
         <div class="player-info">
@@ -90,18 +104,38 @@
                 <li>Respectez les autres joueurs</li>
                 <li>Pas de spam ou de flood</li>
                 <li>Pas de triche ou d'exploits</li>
-                <!-- Ajoute tes règles ici -->
             </ul>
         </div>
     </div>
 
     <script>
-        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-            document.getElementById('steam-name').textContent = steamid;
-            document.getElementById('steam-avatar').src = `https://steamcommunity.com/profiles/${steamid}/avatarfull`;
+        // Diaporama
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.background-slideshow img');
+        
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
         }
 
-        // Fonction pour mettre à jour la barre de progression
+        // Activer la première image
+        slides[0].classList.add('active');
+        // Changer d'image toutes les 5 secondes
+        setInterval(nextSlide, 5000);
+
+        // Fonctions GMod
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            const steamName = document.getElementById('steam-name');
+            const steamAvatar = document.getElementById('steam-avatar');
+            
+            steamName.textContent = steamid;
+            steamAvatar.src = `http://steamcommunity.com/profiles/${steamid}/avatar`;
+        }
+
+        let filesNeeded = 0;
+        let filesTotal = 0;
+
         function SetFilesNeeded(needed) {
             filesNeeded = needed;
             updateProgress();
@@ -113,21 +147,15 @@
         }
 
         function DownloadingFile(fileName) {
-            currentFile = fileName;
             updateProgress();
         }
 
         function updateProgress() {
             if (filesTotal > 0) {
-                var progress = ((filesTotal - filesNeeded) / filesTotal) * 100;
+                const progress = ((filesTotal - filesNeeded) / filesTotal) * 100;
                 document.getElementById('progress-bar').style.width = progress + '%';
             }
         }
-
-        // Initialisation
-        var filesNeeded = 0;
-        var filesTotal = 0;
-        var currentFile = '';
     </script>
 </body>
 </html>

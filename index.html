@@ -7,8 +7,6 @@
             margin: 0;
             padding: 0;
             background: #000;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
             overflow: hidden;
         }
 
@@ -32,32 +30,12 @@
             opacity: 1;
         }
 
-        .container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            width: 80%;
-        }
-
-        .player-info {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .avatar {
-            width: 128px;
-            height: 128px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            border: 3px solid #fff;
-        }
-
         .loading-bar {
-            width: 100%;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
             height: 20px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
@@ -70,14 +48,6 @@
             background: linear-gradient(90deg, #ff0000, #00ff00);
             transition: width 0.5s ease;
         }
-
-        .rules {
-            margin-top: 20px;
-            text-align: left;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-        }
     </style>
 </head>
 <body>
@@ -87,24 +57,8 @@
         <img src="https://imgur.com/a/TONLIEN3">
     </div>
 
-    <div class="container">
-        <div class="player-info">
-            <img class="avatar" id="steam-avatar" src="default-avatar.jpg" alt="Steam Avatar">
-            <h2 id="steam-name">Chargement...</h2>
-        </div>
-
-        <div class="loading-bar">
-            <div class="progress" id="progress-bar"></div>
-        </div>
-
-        <div class="rules">
-            <h3>Règles du serveur:</h3>
-            <ul>
-                <li>Respectez les autres joueurs</li>
-                <li>Pas de spam ou de flood</li>
-                <li>Pas de triche ou d'exploits</li>
-            </ul>
-        </div>
+    <div class="loading-bar">
+        <div class="progress" id="progress-bar"></div>
     </div>
 
     <script>
@@ -119,12 +73,6 @@
 
         slides[0].classList.add('active');
         setInterval(nextSlide, 5000);
-
-        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-            const steamName = document.getElementById('steam-name');
-            steamName.textContent = steamid;
-            document.getElementById('steam-avatar').src = `https://avatars.steamstatic.com/${steamid}_full.jpg`;
-        }
 
         let filesNeeded = 0;
         let filesTotal = 0;

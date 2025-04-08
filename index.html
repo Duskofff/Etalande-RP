@@ -1,133 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Écran de chargement</title>
+    <title>Loading Screen</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #1a1a1a;
-            font-family: 'Roboto', sans-serif;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
+            background: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        #background-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
         }
 
         .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
+            width: 80%;
+        }
+
+        .player-info {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
         .avatar {
             width: 128px;
             height: 128px;
             border-radius: 50%;
-            border: 4px solid #4169E1;
-            animation: glow 2s infinite;
-            margin-bottom: 20px;
-        }
-
-        .player-name {
-            font-size: 32px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         .loading-bar {
-            width: 300px;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 20px;
         }
 
         .progress {
-            width: 100%;
+            width: 0%;
             height: 100%;
-            background: #4169E1;
-            animation: loading 2s infinite;
-            transform-origin: left;
+            background: linear-gradient(90deg, #ff0000, #00ff00);
+            transition: width 0.5s ease;
         }
 
-        .loading-text {
-            font-size: 18px;
-            margin-bottom: 40px;
-        }
-
-        .tip {
-            font-size: 16px;
-            color: #aaa;
-            position: absolute;
-            bottom: 40px;
-            animation: tipChange 10s infinite;
-        }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px #4169E1; }
-            50% { box-shadow: 0 0 20px #4169E1; }
-            100% { box-shadow: 0 0 5px #4169E1; }
-        }
-
-        @keyframes loading {
-            0% { transform: scaleX(0); }
-            50% { transform: scaleX(1); }
-            100% { transform: scaleX(0); }
-        }
-
-        @keyframes tipChange {
-            0%, 20% { opacity: 0; }
-            25%, 95% { opacity: 1; }
-            100% { opacity: 0; }
+        .rules {
+            margin-top: 20px;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
+    <!-- Remplacer VIDEO_URL par le lien de ta vidéo de fond -->
+    <video id="background-video" autoplay muted loop>
+        <source src="VIDEO_URL" type="video/mp4">
+    </video>
+
     <div class="container">
-        <img src="" alt="Avatar" class="avatar" id="playerAvatar">
-        <div class="player-name" id="playerName">Chargement...</div>
-        <div class="loading-bar">
-            <div class="progress"></div>
+        <div class="player-info">
+            <img class="avatar" id="steam-avatar" src="" alt="Steam Avatar">
+            <h2 id="steam-name">Chargement...</h2>
         </div>
-        <div class="loading-text">Chargement en cours...</div>
-        <div class="tip" id="tip"></div>
+
+        <div class="loading-bar">
+            <div class="progress" id="progress-bar"></div>
+        </div>
+
+        <div class="rules">
+            <h3>Règles du serveur:</h3>
+            <ul>
+                <li>Respectez les autres joueurs</li>
+                <li>Pas de spam ou de flood</li>
+                <li>Pas de triche ou d'exploits</li>
+                <!-- Ajoute tes règles ici -->
+            </ul>
+        </div>
     </div>
 
     <script>
-        const tips = [
-            "Appuyez sur F4 pour ouvrir le menu",
-            "N'oubliez pas de lire les règles !",
-            "Besoin d'aide ? Contactez un administrateur",
-            "Amusez-vous bien sur notre serveur !"
-        ];
-
-        let currentTip = 0;
-        
-        function updateTip() {
-            document.getElementById('tip').textContent = tips[currentTip];
-            currentTip = (currentTip + 1) % tips.length;
+        // Fonction pour récupérer les informations Steam
+        function LoadFileInfo() {
+            return {
+                steamid: GameDetails.steamid,
+                name: GameDetails.name
+            };
         }
 
-        updateTip();
-        setInterval(updateTip, 5000);
+        // Fonction pour mettre à jour la barre de progression
+        function SetFilesNeeded(needed) {
+            filesNeeded = needed;
+        }
 
-        // Récupération des informations du joueur via l'API Steam
-        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-            if (steamid) {
-                // Avatar du joueur
-                document.getElementById('playerAvatar').src = `https://steamcommunity.com/profiles/${steamid}/avatar`;
-                
-                // Nom du joueur (nécessite une requête à l'API Steam)
-                fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=AC5D04FA890C7B417618838B8034C312&steamids=${steamid}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.response.players.length > 0) {
-                            document.getElementById('playerName').textContent = data.response.players[0].personaname;
-                        }
-                    });
+        function SetFilesTotal(total) {
+            filesTotal = total;
+            updateProgress();
+        }
+
+        function DownloadingFile(fileName) {
+            currentFile = fileName;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            if (filesTotal > 0) {
+                var progress = ((filesTotal - filesNeeded) / filesTotal) * 100;
+                document.getElementById('progress-bar').style.width = progress + '%';
             }
         }
+
+        // Initialisation
+        var filesNeeded = 0;
+        var filesTotal = 0;
+        var currentFile = '';
+
+        // Mettre à jour les informations du joueur
+        function updatePlayerInfo() {
+            const playerInfo = LoadFileInfo();
+            document.getElementById('steam-name').textContent = playerInfo.name;
+            document.getElementById('steam-avatar').src = `https://steamcommunity.com/profiles/${playerInfo.steamid}/avatar`;
+        }
+
+        // Appeler la fonction au chargement
+        window.onload = updatePlayerInfo;
     </script>
 </body>
 </html>

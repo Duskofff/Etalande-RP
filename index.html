@@ -83,8 +83,8 @@
 <body>
     <div class="background-slideshow">
         <img src="https://imgur.com/a/zRdWmyx">
-        <img src="https://i.imgur.com/TON_LIEN_2.jpg">
-        <img src="https://i.imgur.com/TON_LIEN_3.jpg">
+        <img src="https://imgur.com/a/TONLIEN2">
+        <img src="https://imgur.com/a/TONLIEN3">
     </div>
 
     <div class="container">
@@ -123,19 +123,7 @@
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
             const steamName = document.getElementById('steam-name');
             steamName.textContent = steamid;
-            
-            // Utilisation de l'API communautaire Steam
-            fetch(`https://steamcommunity.com/profiles/${steamid}?xml=1`)
-            .then(response => response.text())
-            .then(data => {
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(data, "text/xml");
-                const avatarUrl = xml.querySelector("avatarFull").textContent;
-                document.getElementById('steam-avatar').src = avatarUrl;
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-            });
+            document.getElementById('steam-avatar').src = `https://avatars.steamstatic.com/${steamid}_full.jpg`;
         }
 
         let filesNeeded = 0;

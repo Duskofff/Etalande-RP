@@ -96,17 +96,15 @@
     </div>
 
     <script>
-        // Fonction pour récupérer les informations Steam
-        function LoadFileInfo() {
-            return {
-                steamid: GameDetails.steamid,
-                name: GameDetails.name
-            };
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            document.getElementById('steam-name').textContent = steamid;
+            document.getElementById('steam-avatar').src = `https://steamcommunity.com/profiles/${steamid}/avatarfull`;
         }
 
         // Fonction pour mettre à jour la barre de progression
         function SetFilesNeeded(needed) {
             filesNeeded = needed;
+            updateProgress();
         }
 
         function SetFilesTotal(total) {
@@ -130,16 +128,6 @@
         var filesNeeded = 0;
         var filesTotal = 0;
         var currentFile = '';
-
-        // Mettre à jour les informations du joueur
-        function updatePlayerInfo() {
-            const playerInfo = LoadFileInfo();
-            document.getElementById('steam-name').textContent = playerInfo.name;
-            document.getElementById('steam-avatar').src = `https://steamcommunity.com/profiles/${playerInfo.steamid}/avatar`;
-        }
-
-        // Appeler la fonction au chargement
-        window.onload = updatePlayerInfo;
     </script>
 </body>
 </html>

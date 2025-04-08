@@ -109,15 +109,25 @@
             currentTip = (currentTip + 1) % tips.length;
         }
 
-        // Changer le tip toutes les 5 secondes
         updateTip();
         setInterval(updateTip, 5000);
 
-        // Simuler le chargement des données du joueur
-        setTimeout(() => {
-            document.getElementById('playerName').textContent = 'NomDuJoueur';
-            document.getElementById('playerAvatar').src = 'URL_DE_LAVATAR';
-        }, 1000);
+        // Récupération des informations du joueur via l'API Steam
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            if (steamid) {
+                // Avatar du joueur
+                document.getElementById('playerAvatar').src = `https://steamcommunity.com/profiles/${steamid}/avatar`;
+                
+                // Nom du joueur (nécessite une requête à l'API Steam)
+                fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=AC5D04FA890C7B417618838B8034C312&steamids=${steamid}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.response.players.length > 0) {
+                            document.getElementById('playerName').textContent = data.response.players[0].personaname;
+                        }
+                    });
+            }
+        }
     </script>
 </body>
 </html>

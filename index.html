@@ -1,4 +1,29 @@
-<!DOCTYPE html>
+// Création des particules flottantes
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 6 + 's';
+            particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+            
+            document.getElementById('particles').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 8000);
+        }
+        
+        // Créer des particules régulièrement
+        setInterval(createParticle, 500);
+        
+        // Animation des points de chargement
+        const dotsElement = document.querySelector('.loading-dots');
+        let dotCount = 0;
+        
+        setInterval(() => {
+            dotCount = (dotCount + 1) % 4;
+            dotsElement.textContent = '.'.repeat(dotCount);
+        }, 500);<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -167,13 +192,7 @@
         }
 
         .steam-id-input {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            align-items: center;
+            display: none; /* Masquer l'interface de saisie */
         }
 
         .steam-id-input input {
@@ -313,9 +332,12 @@
     </div>
 
     <script>
-        // Configuration de l'API Steam (nécessite une clé API)
-        const STEAM_API_KEY = 'AC5D04FA890C7B417618838B8034C312'; // À remplacer par votre clé API Steam
+        // Configuration de l'API Steam
+        const STEAM_API_KEY = 'AC5D04FA890C7B417618838B8034C312';
         const CORS_PROXY = 'https://api.allorigins.win/raw?url='; // Proxy CORS pour contourner les restrictions
+        
+        // Steam ID par défaut - CHANGEZ CETTE VALEUR PAR VOTRE STEAM ID
+        const DEFAULT_STEAM_ID = '76561198000000000'; // Remplacez par votre Steam ID
         
         let percentage = 0;
         const percentageElement = document.getElementById('percentage');
@@ -329,7 +351,7 @@
         // Fonction pour résoudre le SteamID à partir du nom d'utilisateur
         async function resolveSteamID(vanityUrl) {
             try {
-                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${AC5D04FA890C7B417618838B8034C312}&vanityurl=${vanityUrl}`);
+                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${STEAM_API_KEY}&vanityurl=${vanityUrl}`);
                 const data = await response.json();
                 
                 if (data.response && data.response.success === 1) {
@@ -354,7 +376,7 @@
                     }
                 }
                 
-                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${AC5D04FA890C7B417618838B8034C312}&steamids=${resolvedSteamId}`);
+                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${STEAM_API_KEY}&steamids=${resolvedSteamId}`);
                 const data = await response.json();
                 
                 if (data.response && data.response.players && data.response.players.length > 0) {
@@ -368,16 +390,15 @@
         }
         
         // Fonction pour charger les données Steam
-        async function loadSteamData(steamId) {
-            if (!STEAM_API_KEY || STEAM_API_KEY === 'VOTRE_CLE_API_STEAM') {
-                showError('Clé API Steam non configurée. Utilisez des données par défaut.');
-                loadDemoData();
-                return;
+        async function loadSteamData(steamId = DEFAULT_STEAM_ID) {
+            // Essayer d'abord de récupérer le Steam ID depuis l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const steamIdFromUrl = urlParams.get('steamid');
+            if (steamIdFromUrl) {
+                steamId = steamIdFromUrl;
             }
             
             try {
-                loadButton.disabled = true;
-                loadButton.textContent = 'Chargement...';
                 hideError();
                 
                 const playerInfo = await getSteamPlayerInfo(steamId);
@@ -395,11 +416,9 @@
                 startProgressAnimation();
                 
             } catch (error) {
-                showError('Erreur lors du chargement des données Steam');
+                console.error('Erreur API Steam:', error);
+                showError('Chargement des données Steam...');
                 loadDemoData();
-            } finally {
-                loadButton.disabled = false;
-                loadButton.textContent = 'Charger';
             }
         }
         
@@ -456,53 +475,9 @@
             }
         }
         
-        // Gestionnaire d'événements pour le bouton de chargement
-        loadButton.addEventListener('click', () => {
-            const steamId = steamIdInput.value.trim();
-            if (steamId) {
-                loadSteamData(steamId);
-            } else {
-                showError('Veuillez entrer un Steam ID ou nom d\'utilisateur');
-            }
-        });
-        
-        // Gestionnaire d'événements pour la touche Entrée
-        steamIdInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                loadButton.click();
-            }
-        });
-        
-        // Création des particules flottantes
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 6 + 's';
-            particle.style.animationDuration = (4 + Math.random() * 4) + 's';
-            
-            document.getElementById('particles').appendChild(particle);
-            
-            setTimeout(() => {
-                particle.remove();
-            }, 8000);
-        }
-        
-        // Créer des particules régulièrement
-        setInterval(createParticle, 500);
-        
-        // Animation des points de chargement
-        const dotsElement = document.querySelector('.loading-dots');
-        let dotCount = 0;
-        
-        setInterval(() => {
-            dotCount = (dotCount + 1) % 4;
-            dotsElement.textContent = '.'.repeat(dotCount);
-        }, 500);
-        
-        // Charger des données de démonstration au démarrage
+        // Chargement automatique au démarrage
         setTimeout(() => {
-            loadDemoData();
+            loadSteamData();
         }, 1000);
     </script>
 </body>

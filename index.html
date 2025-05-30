@@ -3,532 +3,513 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Screen</title>
+    <title>New Dawn RP - Serveur GMod</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #0f0f23;
+            --card: #1a1a2e;
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --border: #2a2a3e;
+            --success: #4ecdc4;
+            --warning: #ffe66d;
+            --danger: #ff6b6b;
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #16213e 50%, #0f3460 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-
-        .mountain-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://imgur.com/hrqDJCl.png') no-repeat center center;
-            background-size: cover;
-            filter: blur(1px);
-        }
-
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-        }
-
-        .loading-container {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            color: white;
-        }
-
-        .user-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px solid #00bcd4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            animation: pulse 2s infinite;
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .user-avatar.loading {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .user-avatar .steam-logo {
-            width: 60px;
-            height: 60px;
-            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiMxNzE3MTciLz4KPHBhdGggZD0iTTQ4IDMyQzQ4IDQwLjgzNjYgNDAuODM2NiA0OCAzMiA0OEMyMy4xNjM0IDQ4IDE2IDQwLjgzNjYgMTYgMzJDMTYgMjMuMTYzNCAyMy4xNjM0IDE2IDMyIDE2QzQwLjgzNjYgMTYgNDggMjMuMTYzNCA0OCAzMloiIGZpbGw9IiMwMGJjZDQiLz4KPC9zdmc+') no-repeat center center;
-            background-size: contain;
-        }
-
-        .username {
-            font-size: 24px;
-            font-weight: 300;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            min-height: 32px;
-            display: flex;
-            align-items: center;
-        }
-
-        .username.loading::after {
-            content: '';
-            display: inline-block;
-            width: 100px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            animation: shimmer 1.5s infinite;
-        }
-
-        .loading-text {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 40px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .progress-container {
-            width: 300px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-            overflow: hidden;
-            backdrop-filter: blur(5px);
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #00bcd4, #2196f3);
-            border-radius: 3px;
-            width: 0%;
-            animation: loading 3s ease-in-out infinite;
-            box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
-        }
-
-        .percentage {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .status-indicator {
-            position: absolute;
-            top: 20px;
-            left: 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .status-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .status-text {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
-        }
-
-        .status-active {
-            color: #4caf50;
-            font-weight: bold;
-        }
-
-        .loading-dots {
-            display: inline-block;
-            animation: dots 1.5s infinite;
-        }
-
-        .steam-id-input {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .steam-id-input input {
-            padding: 8px 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            backdrop-filter: blur(10px);
-            font-size: 14px;
-        }
-
-        .steam-id-input input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .steam-id-input button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background: #00bcd4;
-            color: white;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
-
-        .steam-id-input button:hover {
-            background: #00acc1;
-        }
-
-        .steam-id-input button:disabled {
-            background: rgba(255, 255, 255, 0.2);
-            cursor: not-allowed;
-        }
-
-        .error-message {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ff5722;
-            background: rgba(255, 87, 34, 0.1);
-            padding: 8px 16px;
-            border-radius: 4px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 87, 34, 0.3);
-            display: none;
-        }
-
-        .particles {
-            position: absolute;
+        
+        .background-effects {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(240, 147, 251, 0.1) 0%, transparent 50%);
+            animation: float 15s ease-in-out infinite;
         }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            animation: float 6s infinite linear;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 188, 212, 0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 188, 212, 0.6); }
-        }
-
-        @keyframes loading {
-            0% { width: 0%; }
-            50% { width: 75%; }
-            100% { width: 100%; }
-        }
-
-        @keyframes dots {
-            0%, 20% { content: ''; }
-            40% { content: '.'; }
-            60% { content: '..'; }
-            80%, 100% { content: '...'; }
-        }
-
+        
         @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(10px, -10px) rotate(1deg); }
+            66% { transform: translate(-5px, 5px) rotate(-1deg); }
         }
-
-        @keyframes shimmer {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+        
+        /* Navigation */
+        .navbar {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text);
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .nav-links a.active {
+            color: var(--primary);
+            background: rgba(102, 126, 234, 0.2);
+        }
+        
+        .nav-links a.disabled {
+            color: #555;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .nav-links a.disabled:hover {
+            color: #555;
+            background: none;
+            transform: none;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-top: 100px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+        
+        /* Rules sections */
+        .rules-container {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .rules-section {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .rules-section:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+        
+        .intro-text {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .warning-notice {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 102, 102, 0.15));
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .rules-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .rule-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .rule-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .rule-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.8rem;
+        }
+        
+        .rule-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .rule-example {
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        
+        .rule-example::before {
+            content: '💡 Exemple : ';
+            font-weight: 600;
+            color: var(--success);
+            font-style: normal;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .nav-links a {
+                padding: 0.3rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .rules-section {
+                padding: 1.5rem;
+            }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="mountain-background"></div>
-    <div class="overlay"></div>
+    <div class="background-effects"></div>
     
-    <div class="particles" id="particles"></div>
-    
-    <div class="status-indicator">
-        <div class="status-avatar" id="statusAvatar"></div>
-        <div class="status-text">
-            <div class="status-active">active</div>
-            <div>superadmin</div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">New Dawn RP</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Règlement</a></li>
+                <li><a href="#" class="disabled">Boutique</a></li>
+                <li><a href="#" class="disabled">Forum</a></li>
+                <li><a href="#" class="disabled">Discord</a></li>
+                <li><a href="#" class="disabled">Équipe</a></li>
+            </ul>
         </div>
-    </div>
+    </nav>
     
-    <div class="percentage" id="percentage">0%</div>
-    
-    <div class="loading-container">
-        <div class="user-avatar loading" id="userAvatar">
-            <div class="steam-logo"></div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Règlement</h1>
+            <p class="page-subtitle">Serious Roleplay - Garry's Mod</p>
         </div>
         
-        <div class="username loading" id="steamUsername"></div>
-        <div class="loading-text">Connexion à Steam<span class="loading-dots"></span></div>
-        
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+        <div class="rules-container">
+            <!-- Introduction -->
+            <div class="rules-section fade-in">
+                <div class="intro-text">
+                    <p><strong>Bienvenue sur New Dawn RP</strong>, un serveur <strong>Serious RP</strong>.</p>
+                    <p>Pour garantir une expérience immersive et agréable, le respect des règles est obligatoire.</p>
+                </div>
+                
+                <div class="warning-notice">
+                    <strong>⚠️ SANCTIONS :</strong> Avertissement, kick, bannissement temporaire ou permanent selon la gravité.
+                </div>
+            </div>
+            
+            <!-- Règles Générales -->
+            <div class="rules-section fade-in">
+                <h2 class="section-title">Règles Générales RP</h2>
+                
+                <div class="rules-grid">
+                    <div class="rule-card">
+                        <h3 class="rule-name">NoPainRP / NoFearRP</h3>
+                        <p class="rule-description">Vous devez jouer la douleur et la peur comme dans la vraie vie.</p>
+                        <div class="rule-example">Si vous êtes blessé, vous ne pouvez pas courir normalement. Si on vous braque, vous devez coopérer.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">FreeKill</h3>
+                        <p class="rule-description">Tuer un joueur sans raison RP valable est interdit.</p>
+                        <div class="rule-example">Vous ne pouvez pas tuer quelqu'un parce qu'il vous a regardé de travers.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">NLR (New Life Rule)</h3>
+                        <p class="rule-description">Vous perdez la mémoire après votre mort. Interdiction de retourner sur les lieux pendant 5 minutes.</p>
+                        <div class="rule-example">Vous mourrez dans une fusillade, vous ne pouvez pas revenir pour vous venger.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">FreeArrest</h3>
+                        <p class="rule-description">Arrêter quelqu'un sans raison RP est interdit.</p>
+                        <div class="rule-example">Un policier doit avoir des preuves ou un motif valable pour arrêter.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">FreeTaze</h3>
+                        <p class="rule-description">Taser un joueur sans raison RP est interdit.</p>
+                        <div class="rule-example">Taser un citoyen qui vous regarde sans raison est interdit.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">FreePunch</h3>
+                        <p class="rule-description">Frapper un joueur sans justification RP est interdit.</p>
+                        <div class="rule-example">Donner un coup de poing sans interaction RP préalable.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">PropsKill</h3>
+                        <p class="rule-description">Utiliser un objet pour tuer un joueur est interdit.</p>
+                        <div class="rule-example">Écraser un joueur avec un frigo ou autre objet.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">PropsSurf</h3>
+                        <p class="rule-description">Utiliser un objet pour se déplacer de manière irréaliste est interdit.</p>
+                        <div class="rule-example">S'envoler avec une planche sous les pieds.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">PropsBlock</h3>
+                        <p class="rule-description">Bloquer un accès avec un objet est interdit.</p>
+                        <div class="rule-example">Placer des objets devant une porte pour bloquer le passage.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">MetaGaming</h3>
+                        <p class="rule-description">Utiliser des informations obtenues hors RP dans le RP est interdit.</p>
+                        <div class="rule-example">Arrêter un criminel car vous avez vu son plan sur Discord.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">PowerGaming</h3>
+                        <p class="rule-description">Forcer des actions irréalistes sans laisser de chance à l'autre joueur.</p>
+                        <div class="rule-example">"/me vous attache sans vous laisser réagir"</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">BunnyHop</h3>
+                        <p class="rule-description">Se déplacer en sautant en boucle pour aller plus vite est interdit.</p>
+                        <div class="rule-example">Sauter non-stop pour fuir la police.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">JumpShoot</h3>
+                        <p class="rule-description">Tirer en sautant est interdit.</p>
+                        <div class="rule-example">Sauter et tirer sans cesse pour éviter les balles.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">HRP vocal</h3>
+                        <p class="rule-description">Parler hors RP en vocal durant une scène RP est interdit.</p>
+                        <div class="rule-example">Discuter de sa journée pendant une prise d'otage.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">UseBug</h3>
+                        <p class="rule-description">Exploiter un bug ou un glitch est strictement interdit.</p>
+                        <div class="rule-example">Passer à travers les murs, duplication d'argent, invincibilité.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Règles Armes -->
+            <div class="rules-section fade-in">
+                <h2 class="section-title">Règles des Armes</h2>
+                
+                <div class="rules-grid">
+                    <div class="rule-card">
+                        <h3 class="rule-name">Rangement d'armes en RP</h3>
+                        <p class="rule-description">Interdiction de ranger une arme pendant une scène RP.</p>
+                        <div class="rule-example">En poursuite, vous ne pouvez pas cacher votre arme dans une banque.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">Sortie d'armes après fouille</h3>
+                        <p class="rule-description">Interdiction de sortir une arme après avoir été fouillé.</p>
+                        <div class="rule-example">Vous ne pouvez pas sortir un pistolet si un policier vous a fouillé.</div>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h3 class="rule-name">Suicide pour échapper au RP</h3>
+                        <p class="rule-description">Se suicider pour échapper à une action RP est interdit.</p>
+                        <div class="rule-example">Vous ne pouvez pas vous suicider pour éviter la prison.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rappel -->
+            <div class="rules-section fade-in">
+                <h2 class="section-title">Rappel Important</h2>
+                
+                <div class="intro-text">
+                    <p><strong>En cas de doute sur une règle, contactez un membre du staff avant d'agir.</strong></p>
+                    <p>Ce règlement protège l'expérience de jeu de chacun. Le staff peut sanctionner toute action abusive, même non listée ici.</p>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="error-message" id="errorMessage">
-        Erreur lors du chargement des données Steam
-    </div>
-
-    <div class="steam-id-input">
-        <input type="text" id="steamIdInput" placeholder="Steam ID ou nom d'utilisateur" />
-        <button id="loadSteamData">Charger</button>
-    </div>
-
+    </main>
+    
+    <footer class="footer">
+        <p>🎮 New Dawn RP - Serveur Serious Roleplay</p>
+        <p>Respectez les règles, respectez les autres joueurs !</p>  
+    </footer>
+    
     <script>
-        // Configuration de l'API Steam
-        const STEAM_API_KEY = 'AC5D04FA890C7B417618838B8034C312'; // Clé API Steam
-        const CORS_PROXY = 'https://api.allorigins.win/raw?url='; // Proxy CORS pour contourner les restrictions
-        
-        let percentage = 0;
-        const percentageElement = document.getElementById('percentage');
-        const progressBar = document.getElementById('progressBar');
-        const steamUsername = document.getElementById('steamUsername');
-        const userAvatar = document.getElementById('userAvatar');
-        const statusAvatar = document.getElementById('statusAvatar');
-        const errorMessage = document.getElementById('errorMessage');
-        const steamIdInput = document.getElementById('steamIdInput');
-        const loadButton = document.getElementById('loadSteamData');
-        
-        // Fonction pour résoudre le SteamID à partir du nom d'utilisateur
-        async function resolveSteamID(vanityUrl) {
-            try {
-                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${STEAM_API_KEY}&vanityurl=${vanityUrl}`);
-                const data = await response.json();
-                
-                if (data.response && data.response.success === 1) {
-                    return data.response.steamid;
+        // Animation fade-in au scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = Math.random() * 0.2 + 's';
+                    entry.target.classList.add('fade-in');
                 }
-                return null;
-            } catch (error) {
-                console.error('Erreur lors de la résolution du SteamID:', error);
-                return null;
-            }
-        }
-        
-        // Fonction pour récupérer les informations du joueur Steam
-        async function getSteamPlayerInfo(steamId) {
-            try {
-                // Si c'est un nom d'utilisateur, le résoudre en SteamID
-                let resolvedSteamId = steamId;
-                if (isNaN(steamId)) {
-                    resolvedSteamId = await resolveSteamID(steamId);
-                    if (!resolvedSteamId) {
-                        throw new Error('Impossible de résoudre le nom d\'utilisateur');
-                    }
-                }
-                
-                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${STEAM_API_KEY}&steamids=${resolvedSteamId}`);
-                const data = await response.json();
-                
-                if (data.response && data.response.players && data.response.players.length > 0) {
-                    return data.response.players[0];
-                }
-                throw new Error('Joueur non trouvé');
-            } catch (error) {
-                console.error('Erreur lors de la récupération des données Steam:', error);
-                throw error;
-            }
-        }
-        
-        // Fonction pour charger les données Steam
-        async function loadSteamData(steamId) {
-            try {
-                loadButton.disabled = true;
-                loadButton.textContent = 'Chargement...';
-                hideError();
-                
-                const playerInfo = await getSteamPlayerInfo(steamId);
-                
-                // Mettre à jour l'avatar
-                userAvatar.style.backgroundImage = `url('${playerInfo.avatarfull}')`;
-                userAvatar.innerHTML = '';
-                userAvatar.classList.remove('loading');
-                
-                // Mettre à jour le statut avatar aussi
-                statusAvatar.style.backgroundImage = `url('${playerInfo.avatarmedium}')`;
-                
-                // Mettre à jour le nom d'utilisateur
-                steamUsername.textContent = playerInfo.personaname;
-                steamUsername.classList.remove('loading');
-                
-                // Démarrer l'animation de progression
-                startProgressAnimation();
-                
-                // Sauvegarder l'ID dans le localStorage pour la prochaine fois
-                localStorage.setItem('lastSteamId', steamId);
-                
-            } catch (error) {
-                showError('Erreur lors du chargement des données Steam');
-                loadDemoData();
-            } finally {
-                loadButton.disabled = false;
-                loadButton.textContent = 'Charger';
-            }
-        }
-        
-        // Fonction pour charger des données de démonstration
-        function loadDemoData() {
-            // Avatar par défaut
-            userAvatar.style.backgroundImage = `url('https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg')`;
-            userAvatar.innerHTML = '';
-            userAvatar.classList.remove('loading');
-            
-            // Statut avatar par défaut
-            statusAvatar.style.backgroundImage = `url('https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_medium.jpg')`;
-            
-            // Nom par défaut
-            steamUsername.textContent = 'JoueurDemo';
-            steamUsername.classList.remove('loading');
-            
-            startProgressAnimation();
-        }
-        
-        // Fonction pour démarrer l'animation de progression
-        function startProgressAnimation() {
-            percentage = 0;
-            updateProgress();
-        }
-        
-        // Fonction pour afficher les erreurs
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-            setTimeout(() => {
-                errorMessage.style.display = 'none';
-            }, 5000);
-        }
-        
-        // Fonction pour masquer les erreurs
-        function hideError() {
-            errorMessage.style.display = 'none';
-        }
-        
-        // Animation du pourcentage
-        function updateProgress() {
-            if (percentage < 100) {
-                percentage += Math.random() * 3;
-                if (percentage > 100) percentage = 100;
-                
-                percentageElement.textContent = Math.floor(percentage) + '%';
-                progressBar.style.width = percentage + '%';
-                
-                setTimeout(updateProgress, 100 + Math.random() * 200);
-            } else {
-                // Redémarrer l'animation après un délai
-                setTimeout(() => {
-                    percentage = 0;
-                    updateProgress();
-                }, 2000);
-            }
-        }
-        
-        // Gestionnaire d'événements pour le bouton de chargement
-        loadButton.addEventListener('click', () => {
-            const steamId = steamIdInput.value.trim();
-            if (steamId) {
-                loadSteamData(steamId);
-            } else {
-                showError('Veuillez entrer un Steam ID ou nom d\'utilisateur');
-            }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
         });
         
-        // Gestionnaire d'événements pour la touche Entrée
-        steamIdInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                loadButton.click();
-            }
+        document.querySelectorAll('.rules-section').forEach(el => {
+            observer.observe(el);
         });
         
-        // Création des particules flottantes
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 6 + 's';
-            particle.style.animationDuration = (4 + Math.random() * 4) + 's';
-            
-            document.getElementById('particles').appendChild(particle);
-            
-            setTimeout(() => {
-                particle.remove();
-            }, 8000);
-        }
-        
-        // Créer des particules régulièrement
-        setInterval(createParticle, 500);
-        
-        // Animation des points de chargement
-        const dotsElement = document.querySelector('.loading-dots');
-        let dotCount = 0;
-        
-        setInterval(() => {
-            dotCount = (dotCount + 1) % 4;
-            dotsElement.textContent = '.'.repeat(dotCount);
-        }, 500);
-        
-        // Essayer de charger le dernier Steam ID utilisé
-        window.addEventListener('DOMContentLoaded', () => {
-            const lastSteamId = localStorage.getItem('lastSteamId');
-            if (lastSteamId) {
-                steamIdInput.value = lastSteamId;
-                loadSteamData(lastSteamId);
-            } else {
-                // Charger des données de démonstration si aucun ID n'est sauvegardé
-                setTimeout(() => {
-                    loadDemoData();
-                }, 1000);
-            }
+        // Désactiver les liens non fonctionnels
+        document.querySelectorAll('.nav-links a.disabled').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+            });
         });
-        
-        // Fonction pour récupérer les données Steam du joueur actuel dans GMod
-        // Cette fonction sera appelée par GMod via JS
-        function loadCurrentPlayerSteamData(steamId64) {
-            if (steamId64) {
-                loadSteamData(steamId64);
-                steamIdInput.value = steamId64;
-            }
-        }
-        
-        // Exposer la fonction pour GMod
-        window.loadCurrentPlayerSteamData = loadCurrentPlayerSteamData;
     </script>
 </body>
 </html>

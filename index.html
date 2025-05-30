@@ -314,7 +314,7 @@
 
     <script>
         // Configuration de l'API Steam (nécessite une clé API)
-        const STEAM_API_KEY = 'VOTRE_CLE_API_STEAM'; // À remplacer par votre clé API Steam
+        const STEAM_API_KEY = 'AC5D04FA890C7B417618838B8034C312'; // À remplacer par votre clé API Steam
         const CORS_PROXY = 'https://api.allorigins.win/raw?url='; // Proxy CORS pour contourner les restrictions
         
         let percentage = 0;
@@ -329,7 +329,7 @@
         // Fonction pour résoudre le SteamID à partir du nom d'utilisateur
         async function resolveSteamID(vanityUrl) {
             try {
-                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${STEAM_API_KEY}&vanityurl=${vanityUrl}`);
+                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${AC5D04FA890C7B417618838B8034C312}&vanityurl=${vanityUrl}`);
                 const data = await response.json();
                 
                 if (data.response && data.response.success === 1) {
@@ -354,7 +354,7 @@
                     }
                 }
                 
-                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${STEAM_API_KEY}&steamids=${resolvedSteamId}`);
+                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${AC5D04FA890C7B417618838B8034C312}&steamids=${resolvedSteamId}`);
                 const data = await response.json();
                 
                 if (data.response && data.response.players && data.response.players.length > 0) {

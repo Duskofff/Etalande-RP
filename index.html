@@ -13,8 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: url('https://i.imgur.com/XyZ123.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             height: 100vh;
             overflow: hidden;
             position: relative;
@@ -26,7 +25,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://i.imgur.com/mountain-bg.jpg') no-repeat center center;
+            background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') no-repeat center center;
             background-size: cover;
             filter: blur(1px);
         }
@@ -63,18 +62,21 @@
             margin-bottom: 20px;
             backdrop-filter: blur(10px);
             animation: pulse 2s infinite;
-            background-image: url('https://i.imgur.com/steam-avatar.jpg');
             background-size: cover;
             background-position: center;
             overflow: hidden;
+            position: relative;
+        }
+
+        .user-avatar.loading {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .user-avatar .steam-logo {
             width: 60px;
             height: 60px;
-            background: url('https://i.imgur.com/steam-logo.png') no-repeat center center;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiMxNzE3MTciLz4KPHBhdGggZD0iTTQ4IDMyQzQ4IDQwLjgzNjYgNDAuODM2NiA0OCAzMiA0OEMyMy4xNjM0IDQ4IDE2IDQwLjgzNjYgMTYgMzJDMTYgMjMuMTYzNCAyMy4xNjM0IDE2IDMyIDE2QzQwLjgzNjYgMTYgNDggMjMuMTYzNCA0OCAzMloiIGZpbGw9IiMwMGJjZDQiLz4KPC9zdmc+') no-repeat center center;
             background-size: contain;
-            display: none; /* Affiché si pas d'avatar personnalisé */
         }
 
         .username {
@@ -82,6 +84,19 @@
             font-weight: 300;
             margin-bottom: 10px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .username.loading::after {
+            content: '';
+            display: inline-block;
+            width: 100px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            animation: shimmer 1.5s infinite;
         }
 
         .loading-text {
@@ -151,22 +166,62 @@
             animation: dots 1.5s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 188, 212, 0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 188, 212, 0.6); }
+        .steam-id-input {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
-        @keyframes loading {
-            0% { width: 0%; }
-            50% { width: 75%; }
-            100% { width: 100%; }
+        .steam-id-input input {
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+            font-size: 14px;
         }
 
-        @keyframes dots {
-            0%, 20% { content: ''; }
-            40% { content: '.'; }
-            60% { content: '..'; }
-            80%, 100% { content: '...'; }
+        .steam-id-input input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .steam-id-input button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #00bcd4;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .steam-id-input button:hover {
+            background: #00acc1;
+        }
+
+        .steam-id-input button:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff5722;
+            background: rgba(255, 87, 34, 0.1);
+            padding: 8px 16px;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 87, 34, 0.3);
+            display: none;
         }
 
         .particles {
@@ -187,11 +242,35 @@
             animation: float 6s infinite linear;
         }
 
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 188, 212, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 188, 212, 0.6); }
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 75%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
         @keyframes float {
             0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
             10% { opacity: 1; }
             90% { opacity: 1; }
             100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes shimmer {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
         }
     </style>
 </head>
@@ -209,14 +288,14 @@
         </div>
     </div>
     
-    <div class="percentage" id="percentage">99%</div>
+    <div class="percentage" id="percentage">0%</div>
     
     <div class="loading-container">
-        <div class="user-avatar" id="userAvatar">
+        <div class="user-avatar loading" id="userAvatar">
             <div class="steam-logo"></div>
         </div>
         
-        <div class="username" id="steamUsername">JoueurSteam</div>
+        <div class="username loading" id="steamUsername"></div>
         <div class="loading-text">Connexion à Steam<span class="loading-dots"></span></div>
         
         <div class="progress-container">
@@ -224,33 +303,141 @@
         </div>
     </div>
 
+    <div class="error-message" id="errorMessage">
+        Erreur lors du chargement des données Steam
+    </div>
+
+    <div class="steam-id-input">
+        <input type="text" id="steamIdInput" placeholder="Steam ID ou nom d'utilisateur" />
+        <button id="loadSteamData">Charger</button>
+    </div>
+
     <script>
-        // Configuration Steam (à personnaliser)
-        const steamConfig = {
-            username: "MonNomSteam",
-            avatarUrl: "https://imgur.com/ndwCuVM.png", // Remplacer par l'URL de l'avatar Steam
-            backgroundUrl: "https://imgur.com/ndwCuVM.png" // Remplacer par l'URL de fond Imgur
-        };
+        // Configuration de l'API Steam (nécessite une clé API)
+        const STEAM_API_KEY = 'VOTRE_CLE_API_STEAM'; // À remplacer par votre clé API Steam
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url='; // Proxy CORS pour contourner les restrictions
         
-        // Appliquer la configuration
-        document.getElementById('steamUsername').textContent = steamConfig.username;
-        
-        // Charger l'avatar Steam
-        const avatarElement = document.getElementById('userAvatar');
-        if (steamConfig.avatarUrl) {
-            avatarElement.style.backgroundImage = `url('${steamConfig.avatarUrl}')`;
-            avatarElement.innerHTML = ''; // Supprimer le logo par défaut
-        }
-        
-        // Charger le fond personnalisé
-        if (steamConfig.backgroundUrl) {
-            document.body.style.backgroundImage = `url('${steamConfig.backgroundUrl}')`;
-        }
-        // Animation du pourcentage
         let percentage = 0;
         const percentageElement = document.getElementById('percentage');
         const progressBar = document.getElementById('progressBar');
+        const steamUsername = document.getElementById('steamUsername');
+        const userAvatar = document.getElementById('userAvatar');
+        const errorMessage = document.getElementById('errorMessage');
+        const steamIdInput = document.getElementById('steamIdInput');
+        const loadButton = document.getElementById('loadSteamData');
         
+        // Fonction pour résoudre le SteamID à partir du nom d'utilisateur
+        async function resolveSteamID(vanityUrl) {
+            try {
+                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${STEAM_API_KEY}&vanityurl=${vanityUrl}`);
+                const data = await response.json();
+                
+                if (data.response && data.response.success === 1) {
+                    return data.response.steamid;
+                }
+                return null;
+            } catch (error) {
+                console.error('Erreur lors de la résolution du SteamID:', error);
+                return null;
+            }
+        }
+        
+        // Fonction pour récupérer les informations du joueur Steam
+        async function getSteamPlayerInfo(steamId) {
+            try {
+                // Si c'est un nom d'utilisateur, le résoudre en SteamID
+                let resolvedSteamId = steamId;
+                if (isNaN(steamId)) {
+                    resolvedSteamId = await resolveSteamID(steamId);
+                    if (!resolvedSteamId) {
+                        throw new Error('Impossible de résoudre le nom d\'utilisateur');
+                    }
+                }
+                
+                const response = await fetch(`${CORS_PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${STEAM_API_KEY}&steamids=${resolvedSteamId}`);
+                const data = await response.json();
+                
+                if (data.response && data.response.players && data.response.players.length > 0) {
+                    return data.response.players[0];
+                }
+                throw new Error('Joueur non trouvé');
+            } catch (error) {
+                console.error('Erreur lors de la récupération des données Steam:', error);
+                throw error;
+            }
+        }
+        
+        // Fonction pour charger les données Steam
+        async function loadSteamData(steamId) {
+            if (!STEAM_API_KEY || STEAM_API_KEY === 'VOTRE_CLE_API_STEAM') {
+                showError('Clé API Steam non configurée. Utilisez des données par défaut.');
+                loadDemoData();
+                return;
+            }
+            
+            try {
+                loadButton.disabled = true;
+                loadButton.textContent = 'Chargement...';
+                hideError();
+                
+                const playerInfo = await getSteamPlayerInfo(steamId);
+                
+                // Mettre à jour l'avatar
+                userAvatar.style.backgroundImage = `url('${playerInfo.avatarfull}')`;
+                userAvatar.innerHTML = '';
+                userAvatar.classList.remove('loading');
+                
+                // Mettre à jour le nom d'utilisateur
+                steamUsername.textContent = playerInfo.personaname;
+                steamUsername.classList.remove('loading');
+                
+                // Démarrer l'animation de progression
+                startProgressAnimation();
+                
+            } catch (error) {
+                showError('Erreur lors du chargement des données Steam');
+                loadDemoData();
+            } finally {
+                loadButton.disabled = false;
+                loadButton.textContent = 'Charger';
+            }
+        }
+        
+        // Fonction pour charger des données de démonstration
+        function loadDemoData() {
+            // Avatar par défaut
+            userAvatar.style.backgroundImage = `url('https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg')`;
+            userAvatar.innerHTML = '';
+            userAvatar.classList.remove('loading');
+            
+            // Nom par défaut
+            steamUsername.textContent = 'JoueurDemo';
+            steamUsername.classList.remove('loading');
+            
+            startProgressAnimation();
+        }
+        
+        // Fonction pour démarrer l'animation de progression
+        function startProgressAnimation() {
+            percentage = 0;
+            updateProgress();
+        }
+        
+        // Fonction pour afficher les erreurs
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Fonction pour masquer les erreurs
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+        
+        // Animation du pourcentage
         function updateProgress() {
             if (percentage < 100) {
                 percentage += Math.random() * 3;
@@ -261,7 +448,7 @@
                 
                 setTimeout(updateProgress, 100 + Math.random() * 200);
             } else {
-                // Redémarrer l'animation
+                // Redémarrer l'animation après un délai
                 setTimeout(() => {
                     percentage = 0;
                     updateProgress();
@@ -269,7 +456,22 @@
             }
         }
         
-        updateProgress();
+        // Gestionnaire d'événements pour le bouton de chargement
+        loadButton.addEventListener('click', () => {
+            const steamId = steamIdInput.value.trim();
+            if (steamId) {
+                loadSteamData(steamId);
+            } else {
+                showError('Veuillez entrer un Steam ID ou nom d\'utilisateur');
+            }
+        });
+        
+        // Gestionnaire d'événements pour la touche Entrée
+        steamIdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadButton.click();
+            }
+        });
         
         // Création des particules flottantes
         function createParticle() {
@@ -297,6 +499,11 @@
             dotCount = (dotCount + 1) % 4;
             dotsElement.textContent = '.'.repeat(dotCount);
         }, 500);
+        
+        // Charger des données de démonstration au démarrage
+        setTimeout(() => {
+            loadDemoData();
+        }, 1000);
     </script>
 </body>
 </html>
